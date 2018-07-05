@@ -63,9 +63,9 @@ class ArticleCommentFragment : Fragment(){
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mRecyclerView =  view?.findViewById(R.id.RV_comments) as RecyclerView
-        val mLayoutManager = LinearLayoutManager(this.activity);
-        Log.d("debugMode", "The application stopped after this");
-        mRecyclerView.layoutManager = mLayoutManager;
+        val mLayoutManager = LinearLayoutManager(this.activity)
+        Log.d("debugMode", "The application stopped after this")
+        mRecyclerView.layoutManager = mLayoutManager
 
         var comments: Social
         var comm: List<UsrComment> = arrayListOf(UsrComment("comment1", "usr1"), UsrComment("comment2", "usr2"), UsrComment("comment3", "usr3"))
