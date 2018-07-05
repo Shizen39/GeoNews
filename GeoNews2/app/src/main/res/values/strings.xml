@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">GeoNews</string>
+    <string name="news_api_url">https://newsapi.org/v2/</string>
+    <string name="news_api_key" translatable="false">c6f9761272e94a7fb5bdc53820093348</string>
+    <string name="query_failure">query failure</string>
+    <string name="headlines">top-headlines</string>
+    <string name="title_activity_maps">Map</string>
+</resources>
