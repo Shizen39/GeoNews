@@ -92,18 +92,20 @@ class ArticleDetailActivity : AppCompatActivity() {
             ft.setCustomAnimations(android.R.animator.fade_in,
                     android.R.animator.fade_out)
             if (fragment.isHidden) {
-                ft.show(fragment)
-                onWindowFocusChanged(false)
+                ft.show(fragment)   //show comments
+                onWindowFocusChanged(false) //show navbar
 
                 //button.text = "Hide comments"
             } else {
-                ft.hide(fragment)
-                onWindowFocusChanged(true) //show navbar
+                ft.hide(fragment)   //hide comments
+                onWindowFocusChanged(true) //hide navbar
 
                 //button.text = "Show comments"
             }
             ft.commit()
         }
     }
+
+
 
 }
