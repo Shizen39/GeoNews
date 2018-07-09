@@ -1,6 +1,7 @@
 package com.example.giorgio.geonews.Activities.MapActivity
 
 import android.content.Intent
+import android.content.res.Resources
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
@@ -15,6 +16,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.experimental.CommonPool
@@ -22,6 +24,8 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import java.util.*
+
+
 
 
 class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
@@ -52,13 +56,27 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMap
         mapFragment.getMapAsync(this)
     }
 
-    lateinit var countriesISO: ArrayList<String> //list of countries in ISO format
+    private lateinit var countriesISO: ArrayList<String> //list of countries in ISO format
 
     /**
      * Called when the map is ready
      */
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onMapReady(googleMap: GoogleMap) {
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            val success = googleMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            this, R.raw.style_json))
+
+            if (!success) {
+                println("Style parsing failed.")
+            }
+        } catch (e: Resources.NotFoundException) {
+            println("Can't find style. Error: ")
+        }
+
         mMap = googleMap
         mMap.setMaxZoomPreference(5F)
         mMap.isIndoorEnabled = false

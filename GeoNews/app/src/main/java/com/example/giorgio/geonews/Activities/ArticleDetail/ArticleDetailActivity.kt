@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.activity_detail_webview.*
 
 class ArticleDetailActivity : AppCompatActivity() {
 
-    //fBack button on acytionBar... For webview, in order to go back in history
+    //fBack button on actionBar... For webview, in order to go back in history
     override fun onBackPressed() {
         if (WV_article_detail.canGoBack()) {
             WV_article_detail.goBack()
@@ -74,11 +74,14 @@ class ArticleDetailActivity : AppCompatActivity() {
         //set actionbar title
         title= if (articleUrl.contains("http://")) articleUrl.removePrefix("http://")  else articleUrl.removePrefix("https://")
 
+
+
         //get fragment and hide it
         val ft = fragmentManager.beginTransaction()
         val frag= fragmentManager.findFragmentById(R.id.F_comments)
         ft.hide(frag)
         ft.commit()
+
         //Set the hide/show button for comments
         addShowHideListener(R.id.F_Button, frag)
 
@@ -94,6 +97,7 @@ class ArticleDetailActivity : AppCompatActivity() {
             if (fragment.isHidden) {
                 ft.show(fragment)   //show comments
                 onWindowFocusChanged(false) //show navbar
+                ft.addToBackStack(null) //for navbar back button to hide fragment
 
                 //button.text = "Hide comments"
             } else {
