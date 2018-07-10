@@ -13,4 +13,4 @@ class Article (val source: Source, val author: String, val title: String,
 class Source(val id:String, val name: String)
 
 class Social(val comments: List<UsrComment>)
-class UsrComment(val comment: String, val usrImg: String)
+class UsrComment(val id: String, val comment: String, val url: String, val android_id: String, val usr: String, val date:String)

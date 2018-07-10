@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.webkit.WebViewClient
 import com.example.giorgio.geonews.Activities.ListArticles.adapters.CustomViewHolder
+import com.example.giorgio.geonews.Networking.Commenting
 import com.example.giorgio.geonews.R
 import kotlinx.android.synthetic.main.activity_detail_webview.*
 
@@ -46,6 +47,8 @@ class ArticleDetailActivity : AppCompatActivity() {
                 )
     }
 
+
+
     //OnCreate func
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,25 +79,46 @@ class ArticleDetailActivity : AppCompatActivity() {
 
 
 
-        //get fragment and hide it
+
+        //get fragment
         val ft = fragmentManager.beginTransaction()
-        val frag= fragmentManager.findFragmentById(R.id.F_comments)
+        val frag= fragmentManager.findFragmentById(R.id.F_comments) as (ArticleCommentFragment)
+
+        /*
+        val bundle = Bundle()
+        bundle.putString("url", articleUrl)
+
+        frag.arguments = bundle*/
+        frag.articleUrl=articleUrl
+
+
+        //TODO:PASS ARTICLEURL TO FRAGMENT
+
+
+
+        //and hide it
         ft.hide(frag)
         ft.commit()
 
+
+
         //Set the hide/show button for comments
-        addShowHideListener(R.id.F_Button, frag)
+        addShowHideListener(R.id.F_Button, frag, articleUrl)
 
 
     }
 
-    private fun addShowHideListener(buttonId: Int, fragment: Fragment) {
+    private fun addShowHideListener(buttonId: Int, fragment: Fragment, articleUrl:String) {
         val button = findViewById<View>(buttonId) as FloatingActionButton
         button.setOnClickListener {
             val ft = fragmentManager.beginTransaction()
             ft.setCustomAnimations(android.R.animator.fade_in,
                     android.R.animator.fade_out)
             if (fragment.isHidden) {
+
+
+                Commenting.fetchComments(this, articleUrl) //fetch new comments and VIEW them (in fetchComments.onResponse)
+
                 ft.show(fragment)   //show comments
                 onWindowFocusChanged(false) //show navbar
                 ft.addToBackStack(null) //for navbar back button to hide fragment

@@ -36,7 +36,7 @@ class ListArticlesActivity : AppCompatActivity() {
         val country= intent.getStringExtra(COUNTRY_KEY)
         title = Locale("", country).displayCountry
 
-        //Fetch articles and add a new adapter in RV_news (infetchArticles.onBind)
+        //Fetch articles and add a new adapter in RV_news (in fetchArticles.onBind)
         Networking.fetchArticles(this, getString(R.string.headlines), "country=$country&pageSize=100&")
 
 

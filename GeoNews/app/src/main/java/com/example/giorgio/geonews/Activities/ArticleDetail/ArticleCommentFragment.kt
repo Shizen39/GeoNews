@@ -11,10 +11,13 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import com.example.giorgio.geonews.Activities.ArticleDetail.adapters.RecyclerViewAdapter
-import com.example.giorgio.geonews.Data.Social
-import com.example.giorgio.geonews.Data.UsrComment
+import com.example.giorgio.geonews.Data.DB.Constant
+import com.example.giorgio.geonews.Networking.Commenting
 import com.example.giorgio.geonews.R
+import okhttp3.*
+import java.io.IOException
+
+
 
 
 /**
@@ -22,70 +25,56 @@ import com.example.giorgio.geonews.R
  */
 class ArticleCommentFragment : Fragment(), View.OnClickListener {
 
-    //override lifecycle callback to run fragment
-   /* override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    /**
+     * Init variables
+     */
 
-        val inflate= inflater.inflate(R.layout.fragment_comments, container, false)
-
-        val RV= view.findViewById(R.id.RV_comments) as RecyclerView
-
-        var comments: Social
-        var comm: ArrayList<UsrComment> = arrayListOf()
-
-        for (i in 0..5){
-             comm[i] = UsrComment("comment"+i.toString(), "usr"+i.toString())
-        }
-        comments= Social(comm)
-
-
-
-        RV_comments.layoutManager= LinearLayoutManager(context)
-        RV_comments.adapter= RecyclerViewAdapter(comments)
-
-        // Inflate the layout for this fragment
-        return inflate
-    }*/
     lateinit var commentInput: EditText     //Edit text for input comment
-    lateinit var comm: ArrayList<UsrComment>    //list of comments
+    lateinit var c: Constant
+    lateinit var android_id: String
+
+    lateinit var articleUrl: String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         var view = inflater.inflate(R.layout.fragment_comments, container, false)
-        //send button
+
+        //init send button
         val sendButton: Button = view.findViewById(R.id.send_comment)
+
         //find edittext
         commentInput= view.findViewById(R.id.insert_comment)
+
+        //init stuffs
+        c= Constant()
+        android_id= c.getAndroidID(this.context).toString()
+
         //set send button for sending comments
         sendButton.setOnClickListener(this)
-        //init comments list
-        comm = arrayListOf()
+
         return view
     }
-
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //Find RV of comments
         val mRecyclerView =  view?.findViewById(R.id.RV_comments) as RecyclerView
-        val mLayoutManager = LinearLayoutManager(this.activity)
+        val mLayoutManager = LinearLayoutManager(this.context)
+        mLayoutManager.stackFromEnd = true //in order to visualize always the lates comments
         mRecyclerView.layoutManager = mLayoutManager
 
-
-        var comments= Social(comm) //all comments (in Social - Model) TODO: FUNZIONE SELECT *
-
-        val mAdapter = RecyclerViewAdapter(comments)
-        mRecyclerView.adapter = mAdapter
+        //onB_comment click-> fetchComments (in activity) ->adapter=adapter
     }
 
 
-
-
+    /**
+     * On button send click, do postComment() and hide keyboard
+     */
     override fun onClick(v: View?) {
          if (!commentInput.text.isBlank()) {
-             comm.add(UsrComment(commentInput.text.toString(), "usr1")) //add comment TODO:FUNZIONE INSERT INTO
-             commentInput.text.clear()  //clear edi text input
+             postComment()
+             commentInput.text.clear()  //clear edit text input
          }
         //Hide keyboard after send comment
         val editV= this.activity.currentFocus
@@ -95,6 +84,50 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
                     InputMethodManager.HIDE_NOT_ALWAYS)
         }
     }
+
+
+    /**
+     * POST a comment
+    */
+    fun postComment(){
+        val usrId= getUsrID()
+        val formBody= FormBody.Builder()
+                .add("comment", commentInput.text.toString())
+                .add("url", articleUrl)
+                .add("android_id", android_id)
+                .add("usr", usrId)
+                .build()
+        val client= OkHttpClient()
+        val request= Request.Builder()
+                .url(c.INSERT)
+                .post(formBody)
+                .build()
+
+        client.newCall(request).enqueue(object : Callback { //can't .execute() on the main thread!
+            override fun onFailure(call: Call?, e: IOException?) {
+                println("Failed to execute request (okhttp)")
+            }
+            /**
+             * GSON: parse json body response's fields, binding them whit Models
+             */
+            override fun onResponse(call: Call?, response: Response?) {
+                //READALLCOMMENTS
+                Commenting.fetchComments(context, articleUrl)
+
+            }
+        })
+
+
+    }
+
+    /**
+     * Get user id (of actual article comment section) by android_id
+     */
+    fun getUsrID(): String {
+        return 1.toString()
+    }
+
+
 
 
 

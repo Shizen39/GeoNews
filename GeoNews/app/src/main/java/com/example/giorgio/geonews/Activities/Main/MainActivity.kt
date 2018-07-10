@@ -21,11 +21,21 @@ class MainActivity : AppCompatActivity() {
         val COUNTRY_KEY="COUNTRY"
     }
 
+
+
+
     //OnCreate func
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         onWindowFocusChanged(true)
+
+
+
+
+
+
+
 
         //Send intent whit selected country to articleDetailActivity
         val intent= Intent(this, MapsActivity::class.java)

@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.giorgio.geonews.Data.Social
+import com.example.giorgio.geonews.Data.UsrComment
 import com.example.giorgio.geonews.R
 import kotlinx.android.synthetic.main.row_comments.view.*
-import org.w3c.dom.Comment
 
 /**
  * Created by giorgio on 03/07/18.
@@ -15,7 +15,7 @@ import org.w3c.dom.Comment
  * populates the ViewHolders with data, and returns information about the data.
  */
 class RecyclerViewAdapter(val social: Social): RecyclerView.Adapter<CustomViewHolder>() {
-    val titles= listOf("titolo1", "titolo2")
+
     // Create new views and inflate it
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -27,32 +27,31 @@ class RecyclerViewAdapter(val social: Social): RecyclerView.Adapter<CustomViewHo
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         val comment= social.comments[position]
         holder.view.user_comment.text= comment.comment
-        holder.view.user_image.text= comment.usrImg
+        holder.view.user_image.text= comment.usr
+
+
+        //bind article url and holder url
+        holder.comment= comment
     }
 
     //this method is giving the size of the list
     override fun getItemCount(): Int {
-        return social.comments.count()
+        return if(social.comments!=null) social.comments.count() else 0
     }
 }
 /**
  * A CustomViewHolder is used to cache the view objects in order to save memory.
  */
-class CustomViewHolder(val view: View, var comment: Comment?=null): RecyclerView.ViewHolder(view) {
+class CustomViewHolder(val view: View, var comment: UsrComment?=null): RecyclerView.ViewHolder(view) {
 
 /*
     companion object {
         val ARTICLE_LINK_KEY= "ARTICLE_LINK"
-    }
+    }*/
     init {
         view.setOnClickListener {
             println("test")
-
-            val intent= Intent(view.context, ArticleDetailActivity::class.java)
-
-            intent.putExtra(ARTICLE_LINK_KEY, article?.url)
-            view.context.startActivity(intent)
         }
     }
-*/
+
 }
