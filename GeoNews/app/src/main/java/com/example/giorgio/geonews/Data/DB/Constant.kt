@@ -1,9 +1,5 @@
 package com.example.giorgio.geonews.Data.DB
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.provider.Settings
-
 
 /**
  * Created by giorgio on 09/07/18.
@@ -17,13 +13,11 @@ class Constant {
     val READ_ALL = BASE_PATH + "getAllComment.php"
     //val UPDATE = BASE_PATH + "updateComment.php"
     val DELETE = BASE_PATH + "deleteComment.php"
+    val READ_MAX_USR= BASE_PATH + "getMaxUsr.php"
+    val READ_USR= BASE_PATH + "getUsr.php"
 
+    var usr_id:String?=null
 
-    @SuppressLint("HardwareIds")
-    fun getAndroidID(context: Context): String? {
-        return Settings.Secure.getString(context.contentResolver,
-                Settings.Secure.ANDROID_ID)
-    }
 
     //val GET_METHOD = "GET"
     //val POST_METHOD = "POST"

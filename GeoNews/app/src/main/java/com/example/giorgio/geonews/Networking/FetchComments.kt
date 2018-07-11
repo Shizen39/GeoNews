@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.fragment_comments.*
 import okhttp3.*
 import java.io.IOException
 
+
 /**
  * Created by giorgio on 09/07/18.
  */
@@ -36,15 +37,14 @@ object Commenting{
                         //Bind models and json fields
                         val gson = GsonBuilder().create()
                         val social = gson.fromJson(body, Social::class.java) //from json to java obj
-                        println(social)
-                        println(social.comments)
-
 
                         //Send obj to the adapter in a background thread
                         (context as Activity).runOnUiThread { context.RV_comments.adapter = RecyclerViewAdapter(social) }
+
+
                     }
                     else{
-                        val comment= listOf(UsrComment("0","Nothing to show", "nope", "nope", " ", " "))
+                        val comment= listOf(UsrComment("0","Nothing to show", "http://www.nope", "nope", " ", " "))
                         val social= Social(comment)
                         (context as Activity).runOnUiThread { context.RV_comments.adapter = RecyclerViewAdapter(social) }
                     }
@@ -59,3 +59,5 @@ object Commenting{
 
     }
 }
+
+

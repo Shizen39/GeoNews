@@ -84,15 +84,9 @@ class ArticleDetailActivity : AppCompatActivity() {
         val ft = fragmentManager.beginTransaction()
         val frag= fragmentManager.findFragmentById(R.id.F_comments) as (ArticleCommentFragment)
 
-        /*
-        val bundle = Bundle()
-        bundle.putString("url", articleUrl)
 
-        frag.arguments = bundle*/
+        //pass url to comment fragment
         frag.articleUrl=articleUrl
-
-
-        //TODO:PASS ARTICLEURL TO FRAGMENT
 
 
 
@@ -115,8 +109,6 @@ class ArticleDetailActivity : AppCompatActivity() {
             ft.setCustomAnimations(android.R.animator.fade_in,
                     android.R.animator.fade_out)
             if (fragment.isHidden) {
-
-
                 Commenting.fetchComments(this, articleUrl) //fetch new comments and VIEW them (in fetchComments.onResponse)
 
                 ft.show(fragment)   //show comments

@@ -4,16 +4,10 @@
 	if($_SERVER['REQUEST_METHOD']=='POST'){
 		
 		//Getting values
-		$comment = $_GET['comment'];
-		$url = $_GET['url'];
-		$android_id= $_GET['android_id'];
-		$usr = $_GET['usr'];
-		
-		echo $comment;
-		echo $url;
-		echo $android_id;
-		echo $usr;
-
+		$comment = $_POST['comment'];
+		$url = $_POST['url'];
+		$android_id= $_POST['android_id'];
+		$usr = $_POST['usr'];
 
 
 		

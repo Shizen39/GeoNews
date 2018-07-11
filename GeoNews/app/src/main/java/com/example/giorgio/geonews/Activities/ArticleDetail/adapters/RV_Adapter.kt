@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.giorgio.geonews.Data.DB.getColor
 import com.example.giorgio.geonews.Data.Social
 import com.example.giorgio.geonews.Data.UsrComment
 import com.example.giorgio.geonews.R
@@ -29,9 +30,12 @@ class RecyclerViewAdapter(val social: Social): RecyclerView.Adapter<CustomViewHo
         holder.view.user_comment.text= comment.comment
         holder.view.user_image.text= comment.usr
 
+        holder.view.user_image.background.setTint(getColor(comment.android_id, comment.url))
+
 
         //bind article url and holder url
         holder.comment= comment
+
     }
 
     //this method is giving the size of the list
@@ -48,10 +52,6 @@ class CustomViewHolder(val view: View, var comment: UsrComment?=null): RecyclerV
     companion object {
         val ARTICLE_LINK_KEY= "ARTICLE_LINK"
     }*/
-    init {
-        view.setOnClickListener {
-            println("test")
-        }
-    }
+
 
 }

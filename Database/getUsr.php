@@ -1,12 +1,13 @@
 <?php 
 	//Getting the requested id
-	$url = $_GET['url'];
+    $url = $_GET['url'];
+    $android_id= $_GET['android_id'];
 	
 	//Importing database
     require_once('db_connect.php');
 
 	//Creating sql query with where clause to get an specific COMMENTS
-	$sql = "SELECT * FROM COMMENTS WHERE url=$url";
+	$sql = "SELECT usr FROM COMMENTS WHERE url=$url AND android_id=$android_id GROUP BY usr";
 	
 	//getting result 
 	$r = mysqli_query($con,$sql);
@@ -19,18 +20,13 @@
 		
 		//Pushing comment and id in the array created 
 		array_push($result,array(
-			"id"=>$row['id'],
-			"comment"=>$row['comment'],
-            "url"=>$row['url'],
-            "android_id"=>$row['android_id'],
             "usr"=>$row['usr'],
-            "date"=>$row['date'] //quiiiiiiiii
 		));
         
 	}
 	
 	//Displaying the array in json format 
-	echo json_encode(array('comments'=>$result));
+	echo json_encode(array('usr'=>$result));
 	
     mysqli_close($con);
     

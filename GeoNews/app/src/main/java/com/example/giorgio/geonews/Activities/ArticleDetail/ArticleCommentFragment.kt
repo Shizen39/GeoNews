@@ -12,18 +12,21 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import com.example.giorgio.geonews.Data.DB.Constant
+import com.example.giorgio.geonews.Data.DB.getAndroidID
+import com.example.giorgio.geonews.Data.DB.getColor
 import com.example.giorgio.geonews.Networking.Commenting
+import com.example.giorgio.geonews.Networking.Retrieving
 import com.example.giorgio.geonews.R
+import kotlinx.android.synthetic.main.row_comments.*
 import okhttp3.*
 import java.io.IOException
-
-
 
 
 /**
  * Created by giorgio on 03/07/18.
  */
 class ArticleCommentFragment : Fragment(), View.OnClickListener {
+
 
     /**
      * Init variables
@@ -34,6 +37,7 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
     lateinit var android_id: String
 
     lateinit var articleUrl: String
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -48,7 +52,7 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
 
         //init stuffs
         c= Constant()
-        android_id= c.getAndroidID(this.context).toString()
+        android_id= getAndroidID(this.context).toString()
 
         //set send button for sending comments
         sendButton.setOnClickListener(this)
@@ -61,8 +65,12 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
         //Find RV of comments
         val mRecyclerView =  view?.findViewById(R.id.RV_comments) as RecyclerView
         val mLayoutManager = LinearLayoutManager(this.context)
-        mLayoutManager.stackFromEnd = true //in order to visualize always the lates comments
+        //mLayoutManager.stackFromEnd = true //in order to visualize always the lates comments
         mRecyclerView.layoutManager = mLayoutManager
+
+
+
+
 
         //onB_comment click-> fetchComments (in activity) ->adapter=adapter
     }
@@ -111,24 +119,35 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
              * GSON: parse json body response's fields, binding them whit Models
              */
             override fun onResponse(call: Call?, response: Response?) {
-                //READALLCOMMENTS
+                //Read all comments
                 Commenting.fetchComments(context, articleUrl)
 
             }
         })
-
-
     }
 
     /**
      * Get user id (of actual article comment section) by android_id
      */
-    fun getUsrID(): String {
-        return 1.toString()
+    fun getUsrID() : String {
+        //set background color
+        var usrBackground= user_image.background
+        usrBackground.setTint(getColor(android_id, articleUrl))
+
+        //get and set user id
+        var result= Retrieving.MakeNetworkRequestAsyncTask().execute(articleUrl, android_id).get()
+
+        if(result != "") //Usr has already written
+            return result
+        else{ //Usr has not already written, get last Usr and add 1
+            result=Retrieving.MakeNetworkRequestAsyncTask().execute(articleUrl, null).get()
+
+            if(result != ""){ //another usr has already written
+                return (result.toInt()+1).toString()
+            }
+            else{//usr comment is first comment
+                return "1"
+            }
+        }
     }
-
-
-
-
-
 }
