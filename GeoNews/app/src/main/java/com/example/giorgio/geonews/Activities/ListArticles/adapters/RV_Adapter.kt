@@ -35,9 +35,14 @@ class RecyclerViewAdapter(val news: News): RecyclerView.Adapter<CustomViewHolder
         holder.view.description.text= article.description
 
         //Set image
-        Picasso.get().load(article.urlToImage).placeholder(R.mipmap.ic_launcher)
-                .resize(500,250)
-                .centerCrop().into(holder.view.urlToImage)
+        if(article.urlToImage=="null")
+            Picasso.get().load(R.drawable.article)
+                    .resize(500,250)
+                    .centerCrop().into(holder.view.urlToImage)
+        else
+            Picasso.get().load(article.urlToImage).placeholder(R.drawable.article_background_placeholder)
+                    .resize(500,250)
+                    .centerCrop().into(holder.view.urlToImage)
 
         //Set publishedAt in form of "x time ago"
         holder.view.publishedAt.text= formatDate(article.publishedAt)

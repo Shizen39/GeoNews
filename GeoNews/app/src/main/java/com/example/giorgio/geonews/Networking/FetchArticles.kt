@@ -1,7 +1,7 @@
 package com.example.giorgio.geonews.Networking
 
 import android.app.Activity
-import android.content.Context
+import android.widget.Toast
 import com.example.giorgio.geonews.Activities.ListArticles.adapters.RecyclerViewAdapter
 import com.example.giorgio.geonews.Data_utils.News
 import com.example.giorgio.geonews.R
@@ -18,16 +18,12 @@ import java.io.IOException
  */
 
 object Networking {
+
     /**
      * OKHTTP: Queries the articles' dataset and returns a list of Article objects.
      */
-    fun fetchArticles(context: Context, end_point: String, queries: String?) {
-        println("getting URL...")
+    fun fetchArticles(context: Activity, end_point: String, queries: String?) {
         val URL = getUrl(context, end_point, queries)
-        println(URL)
-        println("Attempting to fetch JSON")
-
-        /*TODO: TRY CATCH? */
         // Performs HTTP request (GET) and return a JSON response.
         val client = OkHttpClient()
         val request = Request.Builder().url(URL).build()
@@ -35,7 +31,11 @@ object Networking {
         client.newCall(request).enqueue(object : Callback { //can't .execute() on the main thread!
             override fun onFailure(call: Call?, e: IOException?) {
                 println("Failed to execute request (okhttp)")
+                context.runOnUiThread {
+                    Toast.makeText(context, "Failed to fetch data. Retry later.", Toast.LENGTH_LONG).show()
+                }
             }
+
             /**
              * GSON: parse json body response's fields, binding them whit Models
              */
@@ -47,7 +47,7 @@ object Networking {
                 val news = gson.fromJson(body, News::class.java) //from json to java obj
 
                 //Send obj to the adapter in a background thread
-                (context as Activity).runOnUiThread {context.RV_news.adapter= RecyclerViewAdapter(news) }
+                context.runOnUiThread {context.RV_news.adapter= RecyclerViewAdapter(news) }
             }
         })
     }
@@ -55,7 +55,7 @@ object Networking {
     /**
      * Function to form the final URL
      */
-    private fun getUrl(context: Context, end_point: String, queries: String?): String {
+    private fun getUrl(context: Activity, end_point: String, queries: String?): String {
         return context.getString(R.string.news_api_url) + end_point + "?" + queries + "apiKey=" + context.getString(R.string.news_api_key)
     }
 }

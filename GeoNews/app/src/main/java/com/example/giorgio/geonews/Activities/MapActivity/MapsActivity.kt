@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
 import com.example.giorgio.geonews.Activities.ListArticles.ListArticlesActivity
+import com.example.giorgio.geonews.Networking.CheckNetworking
 import com.example.giorgio.geonews.R
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -79,7 +80,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMap
         }
 
         mMap = googleMap
-        mMap.setMaxZoomPreference(5F)
+        mMap.setMaxZoomPreference(4.7F)
         mMap.isIndoorEnabled = false
         mMap.isBuildingsEnabled = false
         mMap.isTrafficEnabled = false
@@ -87,7 +88,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMap
 
         countriesISO= arrayListOf("ae", "ar", "at", "au", "be" ,"bg", "br", "ca", "ch", "cn", "co", "cu", "cz", "de", "eg", "fr", "gb", "gr","hk", "hu", "id", "ie" ,"il" ,"in", "it", "jp", "kr", "lt", "lv", "ma", "mx", "my", "ng", "nl", "no", "nz" ,"ph", "pl", "pt", "ro", "rs", "ru", "sa", "se", "sg", "si", "sk", "th", "tr", "tw", "ua", "us" ,"ve", "za")
 
-
+    if(CheckNetworking.isNetworkAvailable(this))
         for(i in countriesISO.indices) {
             val deferred= async(context=CommonPool){ //deferred==future in java... val that eventually will have a value
                 getLatLng(i)
@@ -99,7 +100,8 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMap
             deferred.invokeOnCompletion {
                 deferred.cancel()
             }
-        }
+        }else Toast.makeText(this, "No internet connection. Check and try again.", Toast.LENGTH_LONG).show()
+
         mMap.setOnMarkerClickListener(this) //click listener on map's markers
     }
 

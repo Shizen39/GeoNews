@@ -13,10 +13,10 @@ import java.io.IOException
  * Created by giorgio on 10/07/18.
  */
 object Retrieving {
-    /**
-     * Fetch all comments
-     */
 
+    /**
+     * Fetch all usrID
+     */
     fun getUsrID(articleUrl: String, android_id: String?): String {
         val client = OkHttpClient()
         val url = if (android_id != null) //Usr has already written, get his usrid
@@ -25,7 +25,6 @@ object Retrieving {
                     Constant().READ_MAX_USR + "?url=" + "\"" + articleUrl + "\"" //usr_id
 
         val req = Request.Builder().url(url).build()
-
         client.newCall(req).execute().use { response -> //do it synchronously because of id needed
             if (!response.isSuccessful) throw IOException("Unexpected code $response")
             val body = response?.body()?.string() //json body response
@@ -35,8 +34,7 @@ object Retrieving {
                 val gson = GsonBuilder().create()
                 val usr = gson.fromJson(body, UsrID::class.java) //from json to java obj
                 usr.Usr[0].usr
-            } else
-                ""
+            } else ""
         }
     }
 

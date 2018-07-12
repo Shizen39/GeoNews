@@ -6,7 +6,9 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.webkit.WebViewClient
+import android.widget.Toast
 import com.example.giorgio.geonews.Activities.ListArticles.adapters.CustomViewHolder
+import com.example.giorgio.geonews.Networking.CheckNetworking
 import com.example.giorgio.geonews.Networking.Commenting
 import com.example.giorgio.geonews.R
 import kotlinx.android.synthetic.main.activity_detail_webview.*
@@ -27,9 +29,11 @@ class ArticleDetailActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (WV_article_detail.canGoBack()) {
             WV_article_detail.goBack()
+            onWindowFocusChanged(true)
         } else {
             // Otherwise defer to system default behavior.
             super.onBackPressed()
+            onWindowFocusChanged(true)
         }
     }
 
@@ -71,8 +75,9 @@ class ArticleDetailActivity : AppCompatActivity() {
         //get url from intent of RV_Adapter
         val articleUrl= intent.getStringExtra(CustomViewHolder.ARTICLE_LINK_KEY)
 
-        //load webview's url
-        WV_article_detail.loadUrl(articleUrl)
+        if(CheckNetworking.isNetworkAvailable(this))
+            WV_article_detail.loadUrl(articleUrl) //load webview's url
+        else Toast.makeText(this, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
 
         //set actionbar title
         title= if (articleUrl.contains("http://")) articleUrl.removePrefix("http://")  else articleUrl.removePrefix("https://")
@@ -109,7 +114,9 @@ class ArticleDetailActivity : AppCompatActivity() {
             ft.setCustomAnimations(android.R.animator.fade_in,
                     android.R.animator.fade_out)
             if (fragment.isHidden) {
-                Commenting.fetchComments(this, articleUrl) //fetch new comments and VIEW them (in fetchComments.onResponse)
+                if(CheckNetworking.isNetworkAvailable(this))
+                    Commenting.fetchComments(this, articleUrl) //fetch new comments and VIEW them (in fetchComments.onResponse)
+                else Toast.makeText(this, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
 
                 ft.show(fragment)   //show comments
                 onWindowFocusChanged(false) //show navbar

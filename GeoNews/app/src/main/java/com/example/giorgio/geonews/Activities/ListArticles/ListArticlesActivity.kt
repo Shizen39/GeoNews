@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.Toast
 import com.example.giorgio.geonews.Activities.Main.MainActivity.Companion.COUNTRY_KEY
+import com.example.giorgio.geonews.Networking.CheckNetworking
 import com.example.giorgio.geonews.Networking.Networking
 import com.example.giorgio.geonews.R
 import kotlinx.android.synthetic.main.activity_list_articles.*
@@ -35,9 +37,10 @@ class ListArticlesActivity : AppCompatActivity() {
         //Get selected country
         val country= intent.getStringExtra(COUNTRY_KEY)
         title = Locale("", country).displayCountry
-
-        //Fetch articles and add a new adapter in RV_news (in fetchArticles.onBind)
-        Networking.fetchArticles(this, getString(R.string.headlines), "country=$country&pageSize=100&")
+        if(CheckNetworking.isNetworkAvailable(this))
+            //Fetch articles and add a new adapter in RV_news (in fetchArticles.onBind)
+            Networking.fetchArticles(this, getString(R.string.headlines), "country=$country&pageSize=100&")
+        else Toast.makeText(this, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
 
 
 

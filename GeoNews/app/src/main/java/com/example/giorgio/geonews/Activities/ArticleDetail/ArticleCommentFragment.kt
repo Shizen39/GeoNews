@@ -11,9 +11,11 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import com.example.giorgio.geonews.Data_utils.DB.Constant
 import com.example.giorgio.geonews.Data_utils.DB.getAndroidID
 import com.example.giorgio.geonews.Data_utils.DB.getColor
+import com.example.giorgio.geonews.Networking.CheckNetworking
 import com.example.giorgio.geonews.Networking.Commenting
 import com.example.giorgio.geonews.Networking.Retrieving
 import com.example.giorgio.geonews.R
@@ -26,37 +28,25 @@ import java.io.IOException
  * Created by giorgio on 03/07/18.
  */
 class ArticleCommentFragment : Fragment(), View.OnClickListener {
-
-
     /**
      * Init variables
      */
-
     lateinit var commentInput: EditText     //Edit text for input comment
     lateinit var c: Constant
     lateinit var android_id: String
-
     lateinit var articleUrl: String
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_comments, container, false)
 
-        var view = inflater.inflate(R.layout.fragment_comments, container, false)
-
-        //init send button
-        val sendButton: Button = view.findViewById(R.id.send_comment)
-
-        //find edittext
-        commentInput= view.findViewById(R.id.insert_comment)
-
-        //init stuffs
+        val sendButton: Button = view.findViewById(R.id.send_comment) //init send button
+        commentInput= view.findViewById(R.id.insert_comment) //find edittext
+        //init helpers
         c= Constant()
         android_id= getAndroidID(this.context).toString()
 
-        //set send button for sending comments
-        sendButton.setOnClickListener(this)
-
+        sendButton.setOnClickListener(this)//set send button for sending comments
         return view
     }
 
@@ -67,12 +57,6 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
         val mLayoutManager = LinearLayoutManager(this.context)
         //mLayoutManager.stackFromEnd = true //in order to visualize always the lates comments
         mRecyclerView.layoutManager = mLayoutManager
-
-
-
-
-
-        //onB_comment click-> fetchComments (in activity) ->adapter=adapter
     }
 
 
@@ -81,7 +65,9 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
      */
     override fun onClick(v: View?) {
          if (!commentInput.text.isBlank()) {
-             postComment()
+             if(CheckNetworking.isNetworkAvailable(this.context))
+                postComment()
+             else Toast.makeText(this.context, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
              commentInput.text.clear()  //clear edit text input
          }
         //Hide keyboard after send comment
@@ -97,7 +83,7 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
     /**
      * POST a comment
     */
-    fun postComment(){
+    private fun postComment(){
         val usrId= getUsrID()
         val formBody= FormBody.Builder()
                 .add("comment", commentInput.text.toString())
@@ -114,6 +100,7 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
         client.newCall(request).enqueue(object : Callback { //can't .execute() on the main thread!
             override fun onFailure(call: Call?, e: IOException?) {
                 println("Failed to execute request (okhttp)")
+                Toast.makeText(context, "Failed to fetch data. Retry later.", Toast.LENGTH_LONG).show()
             }
             /**
              * GSON: parse json body response's fields, binding them whit Models
@@ -129,25 +116,25 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
     /**
      * Get user id (of actual article comment section) by android_id
      */
-    fun getUsrID() : String {
+    private fun getUsrID() : String {
         //set background color
-        var usrBackground= user_image.background
+        val usrBackground= user_image.background
         usrBackground.setTint(getColor(android_id, articleUrl))
 
         //get and set user id
         var result= Retrieving.MakeNetworkRequestAsyncTask().execute(articleUrl, android_id).get()
 
-        if(result != "") //Usr has already written
-            return result
-        else{ //Usr has not already written, get last Usr and add 1
-            result=Retrieving.MakeNetworkRequestAsyncTask().execute(articleUrl, null).get()
+        return if(result != "") //Usr has already written
+                    result
+                else{ //Usr has not already written, get last Usr and add 1
+                    result=Retrieving.MakeNetworkRequestAsyncTask().execute(articleUrl, null).get()
 
-            if(result != ""){ //another usr has already written
-                return (result.toInt()+1).toString()
-            }
-            else{//usr comment is first comment
-                return "1"
-            }
-        }
+                    if(result != ""){ //another usr has already written
+                        (result.toInt()+1).toString()
+                    }
+                    else{//usr comment is first comment
+                        "1"
+                    }
+                }
     }
 }
