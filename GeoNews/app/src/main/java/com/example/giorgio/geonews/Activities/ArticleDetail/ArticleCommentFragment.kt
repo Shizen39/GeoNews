@@ -11,9 +11,9 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import com.example.giorgio.geonews.Data.DB.Constant
-import com.example.giorgio.geonews.Data.DB.getAndroidID
-import com.example.giorgio.geonews.Data.DB.getColor
+import com.example.giorgio.geonews.Data_utils.DB.Constant
+import com.example.giorgio.geonews.Data_utils.DB.getAndroidID
+import com.example.giorgio.geonews.Data_utils.DB.getColor
 import com.example.giorgio.geonews.Networking.Commenting
 import com.example.giorgio.geonews.Networking.Retrieving
 import com.example.giorgio.geonews.R

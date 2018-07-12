@@ -3,7 +3,7 @@ package com.example.giorgio.geonews.Networking
 import android.app.Activity
 import android.content.Context
 import com.example.giorgio.geonews.Activities.ListArticles.adapters.RecyclerViewAdapter
-import com.example.giorgio.geonews.Data.News
+import com.example.giorgio.geonews.Data_utils.News
 import com.example.giorgio.geonews.R
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_list_articles.*

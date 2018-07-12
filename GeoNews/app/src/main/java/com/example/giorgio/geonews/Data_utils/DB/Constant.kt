@@ -1,4 +1,4 @@
-package com.example.giorgio.geonews.Data.DB
+package com.example.giorgio.geonews.Data_utils.DB
 
 
 /**

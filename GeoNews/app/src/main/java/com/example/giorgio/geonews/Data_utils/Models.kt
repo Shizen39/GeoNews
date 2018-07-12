@@ -1,4 +1,4 @@
-package com.example.giorgio.geonews.Data
+package com.example.giorgio.geonews.Data_utils
 
 /**
  * Created by giorgio on 01/07/18.

@@ -6,9 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.giorgio.geonews.Activities.ArticleDetail.ArticleDetailActivity
-import com.example.giorgio.geonews.Data.Article
-import com.example.giorgio.geonews.Data.News
-import com.example.giorgio.geonews.Data.formatter.formatDate
+import com.example.giorgio.geonews.Data_utils.Article
+import com.example.giorgio.geonews.Data_utils.News
+import com.example.giorgio.geonews.Data_utils.formatter.formatDate
 import com.example.giorgio.geonews.R
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.row_articles.view.*

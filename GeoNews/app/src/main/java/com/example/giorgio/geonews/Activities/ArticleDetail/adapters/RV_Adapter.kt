@@ -4,9 +4,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.giorgio.geonews.Data.DB.getColor
-import com.example.giorgio.geonews.Data.Social
-import com.example.giorgio.geonews.Data.UsrComment
+import com.example.giorgio.geonews.Data_utils.DB.getColor
+import com.example.giorgio.geonews.Data_utils.Social
+import com.example.giorgio.geonews.Data_utils.UsrComment
+import com.example.giorgio.geonews.Data_utils.formatter.formatDate
 import com.example.giorgio.geonews.R
 import kotlinx.android.synthetic.main.row_comments.view.*
 
@@ -29,8 +30,11 @@ class RecyclerViewAdapter(val social: Social): RecyclerView.Adapter<CustomViewHo
         val comment= social.comments[position]
         holder.view.user_comment.text= comment.comment
         holder.view.user_image.text= comment.usr
+        println(comment.date)
+        println(formatDate(comment.date))
+        holder.view.date.text=formatDate(comment.date)
 
-        holder.view.user_image.background.setTint(getColor(comment.android_id, comment.url))
+        holder.view.user_image.background.setTint(getColor(comment.android_id, comment.url)) //Get usr_color by comment url and usr_android_id
 
 
         //bind article url and holder url

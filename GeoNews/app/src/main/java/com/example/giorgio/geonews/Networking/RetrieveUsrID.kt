@@ -1,8 +1,8 @@
 package com.example.giorgio.geonews.Networking
 
 import android.os.AsyncTask
-import com.example.giorgio.geonews.Data.DB.Constant
-import com.example.giorgio.geonews.Data.UsrID
+import com.example.giorgio.geonews.Data_utils.DB.Constant
+import com.example.giorgio.geonews.Data_utils.UsrID
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.Request

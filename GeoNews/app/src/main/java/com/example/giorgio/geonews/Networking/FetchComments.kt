@@ -3,9 +3,9 @@ package com.example.giorgio.geonews.Networking
 import android.app.Activity
 import android.content.Context
 import com.example.giorgio.geonews.Activities.ArticleDetail.adapters.RecyclerViewAdapter
-import com.example.giorgio.geonews.Data.DB.Constant
-import com.example.giorgio.geonews.Data.Social
-import com.example.giorgio.geonews.Data.UsrComment
+import com.example.giorgio.geonews.Data_utils.DB.Constant
+import com.example.giorgio.geonews.Data_utils.Social
+import com.example.giorgio.geonews.Data_utils.UsrComment
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_comments.*
 import okhttp3.*
