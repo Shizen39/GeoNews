@@ -35,9 +35,9 @@ class RecyclerViewAdapter(val news: News): RecyclerView.Adapter<CustomViewHolder
         holder.view.description.text= article.description
 
         //Set image
-        if(article.urlToImage=="null")
-            Picasso.get().load(R.drawable.article)
-                    .resize(500,250)
+        if(article.urlToImage=="null" || article.urlToImage=="" || article.urlToImage==null)
+            Picasso.get().load(R.drawable.article).placeholder(R.drawable.article)
+                    .resize(250,250)
                     .centerCrop().into(holder.view.urlToImage)
         else
             Picasso.get().load(article.urlToImage).placeholder(R.drawable.article_background_placeholder)
@@ -67,9 +67,9 @@ class CustomViewHolder(val view: View, var article: Article?=null): RecyclerView
     init {
         view.setOnClickListener {
             val intent= Intent(view.context, ArticleDetailActivity::class.java)
-
             intent.putExtra(ARTICLE_LINK_KEY, article?.url)
             view.context.startActivity(intent)
+
         }
     }
 

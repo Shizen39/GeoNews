@@ -5,7 +5,9 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.Toast
+import com.example.giorgio.geonews.Activities.ListArticles.adapters.RecyclerViewAdapter
 import com.example.giorgio.geonews.Activities.Main.MainActivity.Companion.COUNTRY_KEY
+import com.example.giorgio.geonews.Data_utils.News
 import com.example.giorgio.geonews.Networking.CheckNetworking
 import com.example.giorgio.geonews.Networking.Networking
 import com.example.giorgio.geonews.R
@@ -29,10 +31,11 @@ class ListArticlesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_articles)
-        //onWindowFocusChanged(true)
+        onWindowFocusChanged(true)
 
         //Creates a vertical Layout Manager and Access the RecyclerView Adapter
         RV_news.layoutManager= LinearLayoutManager(this)
+        RV_news.adapter= RecyclerViewAdapter(News(emptyList()))
 
         //Get selected country
         val country= intent.getStringExtra(COUNTRY_KEY)

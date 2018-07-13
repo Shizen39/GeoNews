@@ -37,7 +37,6 @@ object Commenting{
 
                     //Send obj to the adapter in a background thread
                     (context as Activity).runOnUiThread { context.RV_comments.adapter = RecyclerViewAdapter(social) }
-
                 }
                 else{
                     val comment= listOf(UsrComment("0","Nothing to show", "http://www.nope", "nope", " ", " "))

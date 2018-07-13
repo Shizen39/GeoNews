@@ -8,13 +8,17 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
+import com.example.giorgio.geonews.Activities.ArticleDetail.adapters.RecyclerViewAdapter
 import com.example.giorgio.geonews.Data_utils.DB.Constant
 import com.example.giorgio.geonews.Data_utils.DB.getAndroidID
 import com.example.giorgio.geonews.Data_utils.DB.getColor
+import com.example.giorgio.geonews.Data_utils.Social
 import com.example.giorgio.geonews.Networking.CheckNetworking
 import com.example.giorgio.geonews.Networking.Commenting
 import com.example.giorgio.geonews.Networking.Retrieving
@@ -24,14 +28,18 @@ import okhttp3.*
 import java.io.IOException
 
 
+
+
 /**
  * Created by giorgio on 03/07/18.
  */
 class ArticleCommentFragment : Fragment(), View.OnClickListener {
+
     /**
      * Init variables
      */
     lateinit var commentInput: EditText     //Edit text for input comment
+    lateinit var my_img: TextView
     lateinit var c: Constant
     lateinit var android_id: String
     lateinit var articleUrl: String
@@ -42,13 +50,20 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
 
         val sendButton: Button = view.findViewById(R.id.send_comment) //init send button
         commentInput= view.findViewById(R.id.insert_comment) //find edittext
+        my_img= view.findViewById(R.id.my_image)
         //init helpers
         c= Constant()
         android_id= getAndroidID(this.context).toString()
 
+        //Edittext break the fullscreen ui. Some adjustment
+        commentInput.setOnClickListener({activity.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)})
+        commentInput.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus -> if (hasFocus) activity.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)}
+
         sendButton.setOnClickListener(this)//set send button for sending comments
         return view
+
     }
+
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -57,6 +72,7 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
         val mLayoutManager = LinearLayoutManager(this.context)
         //mLayoutManager.stackFromEnd = true //in order to visualize always the lates comments
         mRecyclerView.layoutManager = mLayoutManager
+        mRecyclerView.adapter= RecyclerViewAdapter(Social(emptyList()))
     }
 
 
@@ -64,6 +80,7 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
      * On button send click, do postComment() and hide keyboard
      */
     override fun onClick(v: View?) {
+        ArticleDetailActivity().hideSystemUI(activity.window.decorView, false)
          if (!commentInput.text.isBlank()) {
              if(CheckNetworking.isNetworkAvailable(this.context))
                 postComment()
@@ -85,6 +102,7 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
     */
     private fun postComment(){
         val usrId= getUsrID()
+        my_img.text=usrId //set personal userId near of edittext
         val formBody= FormBody.Builder()
                 .add("comment", commentInput.text.toString())
                 .add("url", articleUrl)
@@ -109,6 +127,7 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
                 //Read all comments
                 Commenting.fetchComments(context, articleUrl)
 
+
             }
         })
     }
@@ -118,8 +137,10 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
      */
     private fun getUsrID() : String {
         //set background color
-        val usrBackground= user_image.background
-        usrBackground.setTint(getColor(android_id, articleUrl))
+        val backgroundColor=getColor(android_id, articleUrl)
+        user_image.background.setTint(backgroundColor) //for
+        my_img.background.setTint(backgroundColor)
+
 
         //get and set user id
         var result= Retrieving.MakeNetworkRequestAsyncTask().execute(articleUrl, android_id).get()

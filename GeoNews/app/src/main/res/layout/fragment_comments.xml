@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f4ede6"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:theme="@style/WVTheme"
+    android:background="#f5f1ed">
 
 
     <android.support.v7.widget.RecyclerView
@@ -20,17 +21,17 @@
 
     <EditText
         android:id="@+id/insert_comment"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
+        android:layout_width="232dp"
+        android:layout_height="46dp"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
-        android:inputType="textPersonName"
         android:hint="Insert your comment"
+        android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/send_comment"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/my_image"
         app:layout_constraintTop_toBottomOf="@+id/RV_comments" />
 
     <Button
@@ -45,5 +46,29 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/insert_comment"
         app:layout_constraintTop_toBottomOf="@+id/RV_comments" />
+
+    <TextView
+        android:id="@+id/my_image"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/my_circle_background"
+        android:elevation="10dp"
+        android:fontFamily="sans-serif"
+
+
+        android:gravity="center"
+        android:text="ID"
+        android:textColor="#FFF"
+        android:textSize="15dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/user_comment"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/RV_comments"
+        app:layout_constraintVertical_bias="1.0" />
 
 </android.support.constraint.ConstraintLayout>
