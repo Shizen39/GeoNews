@@ -26,7 +26,7 @@
 	}
 	
 	//Displaying the array in json format 
-	echo json_encode(array('usr'=>$result));
+	echo json_encode(array('Usr'=>$result));
 	
     mysqli_close($con);
     

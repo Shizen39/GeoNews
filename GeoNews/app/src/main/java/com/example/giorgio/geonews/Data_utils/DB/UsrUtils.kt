@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.provider.Settings
 
+
 /**
  * Created by giorgio on 10/07/18.
  */
@@ -41,5 +42,11 @@ private fun intToARGB(i: Int): String {
             Integer.toHexString(i shr 8 and 0xFF) +
             Integer.toHexString(i and 0xFF)
 }
+
+
+/*
+
+
+*/
 
 

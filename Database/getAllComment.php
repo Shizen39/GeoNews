@@ -6,7 +6,7 @@
     require_once('db_connect.php');
 
 	//Creating sql query with where clause to get an specific COMMENTS
-	$sql = "SELECT * FROM COMMENTS WHERE url=$url";
+	$sql = "SELECT id,comment,url,android_id,usr,DATE_FORMAT(CONVERT_TZ(`date`, '+04:00', @@session.time_zone), '%Y-%m-%dT%TZ') as date FROM COMMENTS WHERE url=$url order by id";
 	
 	//getting result 
 	$r = mysqli_query($con,$sql);

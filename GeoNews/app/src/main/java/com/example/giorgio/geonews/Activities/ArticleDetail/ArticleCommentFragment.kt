@@ -14,18 +14,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import com.example.giorgio.geonews.Activities.ArticleDetail.adapters.RecyclerViewAdapter
 import com.example.giorgio.geonews.Data_utils.DB.Constant
 import com.example.giorgio.geonews.Data_utils.DB.getAndroidID
 import com.example.giorgio.geonews.Data_utils.DB.getColor
-import com.example.giorgio.geonews.Data_utils.Social
 import com.example.giorgio.geonews.Networking.CheckNetworking
-import com.example.giorgio.geonews.Networking.Commenting
-import com.example.giorgio.geonews.Networking.Retrieving
+import com.example.giorgio.geonews.Networking.CreateComment
+import com.example.giorgio.geonews.Networking.RetrieveUsrID
 import com.example.giorgio.geonews.R
 import kotlinx.android.synthetic.main.row_comments.*
-import okhttp3.*
-import java.io.IOException
 
 
 
@@ -72,7 +68,6 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
         val mLayoutManager = LinearLayoutManager(this.context)
         //mLayoutManager.stackFromEnd = true //in order to visualize always the lates comments
         mRecyclerView.layoutManager = mLayoutManager
-        mRecyclerView.adapter= RecyclerViewAdapter(Social(emptyList()))
     }
 
 
@@ -81,9 +76,12 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
      */
     override fun onClick(v: View?) {
         ArticleDetailActivity().hideSystemUI(activity.window.decorView, false)
-         if (!commentInput.text.isBlank()) {
-             if(CheckNetworking.isNetworkAvailable(this.context))
-                postComment()
+         if (!commentInput.text.isBlank()) { //If user has written something
+             if(CheckNetworking.isNetworkAvailable(this.context)){ //post the comment if there's interne connection
+                 val usrId= getUsrID() //get user id by it's android_id + article url
+                 my_img.text=usrId //set personal userId near of edittext
+                 CreateComment.post(context, commentInput.text.toString(), articleUrl, android_id, usrId) //make a post request
+             }
              else Toast.makeText(this.context, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
              commentInput.text.clear()  //clear edit text input
          }
@@ -98,42 +96,7 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
 
 
     /**
-     * POST a comment
-    */
-    private fun postComment(){
-        val usrId= getUsrID()
-        my_img.text=usrId //set personal userId near of edittext
-        val formBody= FormBody.Builder()
-                .add("comment", commentInput.text.toString())
-                .add("url", articleUrl)
-                .add("android_id", android_id)
-                .add("usr", usrId)
-                .build()
-        val client= OkHttpClient()
-        val request= Request.Builder()
-                .url(c.INSERT)
-                .post(formBody)
-                .build()
-
-        client.newCall(request).enqueue(object : Callback { //can't .execute() on the main thread!
-            override fun onFailure(call: Call?, e: IOException?) {
-                println("Failed to execute request (okhttp)")
-                Toast.makeText(context, "Failed to fetch data. Retry later.", Toast.LENGTH_LONG).show()
-            }
-            /**
-             * GSON: parse json body response's fields, binding them whit Models
-             */
-            override fun onResponse(call: Call?, response: Response?) {
-                //Read all comments
-                Commenting.fetchComments(context, articleUrl)
-
-
-            }
-        })
-    }
-
-    /**
-     * Get user id (of actual article comment section) by android_id
+     * Get user id by it's android_id + article url
      */
     private fun getUsrID() : String {
         //set background color
@@ -143,12 +106,12 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
 
 
         //get and set user id
-        var result= Retrieving.MakeNetworkRequestAsyncTask().execute(articleUrl, android_id).get()
+        var result= RetrieveUsrID.MakeNetworkRequestAsyncTask().execute(articleUrl, android_id).get()
 
         return if(result != "") //Usr has already written
                     result
                 else{ //Usr has not already written, get last Usr and add 1
-                    result=Retrieving.MakeNetworkRequestAsyncTask().execute(articleUrl, null).get()
+                    result=RetrieveUsrID.MakeNetworkRequestAsyncTask().execute(articleUrl, null).get()
 
                     if(result != ""){ //another usr has already written
                         (result.toInt()+1).toString()
