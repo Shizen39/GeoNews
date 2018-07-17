@@ -17,6 +17,7 @@ import android.widget.Toast
 import com.example.giorgio.geonews.Data_utils.DB.Constant
 import com.example.giorgio.geonews.Data_utils.DB.getAndroidID
 import com.example.giorgio.geonews.Data_utils.DB.getColor
+import com.example.giorgio.geonews.Data_utils.UsrComment
 import com.example.giorgio.geonews.Networking.CheckNetworking
 import com.example.giorgio.geonews.Networking.CreateComment
 import com.example.giorgio.geonews.Networking.RetrieveUsrID
@@ -41,7 +42,7 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
     lateinit var android_id: String
     lateinit var articleUrl: String
     var updating= false
-    lateinit var oldComm: String
+    lateinit var oldItem: UsrComment
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -90,10 +91,10 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
         }
         else {  //User is updating his comment
             println(commentInput.text.toString())
-            println(oldComm)
-            if (commentInput.text.toString() != oldComm) { //If user has updated the comment
+            println(oldItem)
+            if (commentInput.text.toString() != oldItem.comment) { //If user has updated the comment
                 if (CheckNetworking.isNetworkAvailable(this.context)) //post the comment if there's interne connection
-                    UpdateComment.updateComment(this.context, commentInput.text.toString(), oldComm, articleUrl)
+                    UpdateComment.updateComment(this.context, commentInput.text.toString(), oldItem.id, articleUrl)
                 else Toast.makeText(this.context, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
             }
             updating=false

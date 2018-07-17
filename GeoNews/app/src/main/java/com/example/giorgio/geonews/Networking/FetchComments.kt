@@ -59,9 +59,9 @@ object Commenting{
                                 imm.showSoftInput(frag.commentInput, InputMethodManager.SHOW_IMPLICIT)
                                 //make flag updating true so the user can modify the comment in the textview (updateComment ->commentFragment.sendB.onCLick())
                                 frag.updating=true
-                                frag.oldComm= item.comment
+                                frag.oldItem= item
                             }else
-                                DeleteComment.deleteComment(context, item.url, item.comment, item.android_id)//MakeNetworkRequestAsyncTask().execute(item.url, item.comment, item.android_id).get()
+                                DeleteComment.deleteComment(context, item.url, item.id)//MakeNetworkRequestAsyncTask().execute(item.url, item.comment, item.android_id).get()
                         }
                     })
                 }

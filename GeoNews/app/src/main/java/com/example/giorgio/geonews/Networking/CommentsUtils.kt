@@ -97,12 +97,11 @@ object RetrieveUsrID {
 
 
 object DeleteComment{
-    fun deleteComment(context: Activity, articleUrl: String, comment: String, android_id: String) {
+    fun deleteComment(context: Activity, articleUrl: String, id: String) {
 
         val formBody= FormBody.Builder()
                 .add("url", articleUrl)
-                .add("comment", comment)
-                .add("android_id", android_id)
+                .add("id", id)
                 .build()
 
         val client= OkHttpClient()
@@ -124,11 +123,10 @@ object DeleteComment{
 }
 
 object UpdateComment{
-    fun updateComment(context: Context, newComment: String, oldComment: String, articleUrl: String) {
+    fun updateComment(context: Context, newComment: String, id: String, articleUrl: String) {
         val formBody= FormBody.Builder()
                 .add("newcomment", newComment)
-                .add("oldcomment", oldComment)
-                .add("url", articleUrl)
+                .add("id", id)
                 .build()
 
         val client= OkHttpClient()
