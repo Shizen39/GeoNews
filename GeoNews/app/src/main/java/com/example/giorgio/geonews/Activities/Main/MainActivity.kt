@@ -20,10 +20,6 @@ class MainActivity : AppCompatActivity() {
                 )
     }
 
-    companion object {
-        val COUNTRY_KEY="COUNTRY"
-    }
-
 
 
 

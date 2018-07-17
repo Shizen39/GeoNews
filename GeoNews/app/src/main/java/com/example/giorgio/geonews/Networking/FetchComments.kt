@@ -60,8 +60,11 @@ object Commenting{
                                 //make flag updating true so the user can modify the comment in the textview (updateComment ->commentFragment.sendB.onCLick())
                                 frag.updating=true
                                 frag.oldItem= item
-                            }else
-                                DeleteComment.deleteComment(context, item.url, item.id)//MakeNetworkRequestAsyncTask().execute(item.url, item.comment, item.android_id).get()
+                            }else{
+                                if(CheckNetworking.isNetworkAvailable(context))
+                                    DeleteComment.deleteComment(context, item.url, item.id)//MakeNetworkRequestAsyncTask().execute(item.url, item.comment, item.android_id).get()
+                                else Toast.makeText(context, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
+                            }
                         }
                     })
                 }

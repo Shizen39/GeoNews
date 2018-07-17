@@ -8,7 +8,10 @@ import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.SearchView
+import android.view.Menu
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import com.example.giorgio.geonews.Activities.ListArticles.ListArticlesActivity
 import com.example.giorgio.geonews.Networking.CheckNetworking
@@ -30,10 +33,23 @@ import java.util.*
 
 
 
+
+
 class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
+    lateinit var searchView: SearchView
+    var queries: String? =null
 
+
+    /** INFLATE SEARCH BAR*/
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+       // Inflate the options menu from XML
+        val inflater = menuInflater
+        inflater.inflate(R.menu.menu_search, menu)
+
+        return true
+    }
 
     //Set FullScreen
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -49,7 +65,9 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMap
     companion object {
         //country to send to articledetailactivity
         val COUNTRY_KEY="COUNTRY"
+        val QUERIES_KEY="QUERIES"
     }
+
 
     //OnCreate func
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,7 +79,31 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMap
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        /**SearchBar stuffs*/
+        searchView = findViewById(R.id.SV_search)
+        searchView.setOnClickListener {
+            /*handle keyboard showing up*/
+            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            searchView.isIconified = false //make whole bar clickable
+        }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                onWindowFocusChanged(true)
+                queries= query
+                Toast.makeText(baseContext, "Ricerca news di $queries, seleziona un marker.", Toast.LENGTH_LONG).show()
+                searchView.clearFocus()
+                return false
+            }
+            override fun onQueryTextChange(newText: String): Boolean {
+                return false
+            }
+        })
+
+
     }
+
 
     private lateinit var countriesISO: ArrayList<String> //list of countries in ISO format
 
@@ -110,6 +152,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMap
         mMap.setOnMarkerClickListener(this) //click listener on map's markers
     }
 
+
     /**
      * retrieve Address object from country name, that contains latitude and longitude (and others stuff)
      */
@@ -135,6 +178,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMap
 
     /** Called when the user clicks a marker.  */
     override fun onMarkerClick(marker:Marker):Boolean {
+        onWindowFocusChanged(true)
         // Retrieve the data from the marker.
         var clickCount = marker.tag as Int?
 
@@ -147,7 +191,10 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMap
             if(clickCount==2){
                 //Send intent whit selected country to articleDetailActivity
                 val intent= Intent(this, ListArticlesActivity::class.java)
-                intent.putExtra(COUNTRY_KEY, marker.title.toLowerCase())  //send country iso code to fetchnews's query
+                var e=Bundle()
+                e.putString(QUERIES_KEY, queries)
+                e.putString(COUNTRY_KEY, marker.title.toLowerCase())
+                intent.putExtras(e)  //send country iso code and eventually queries to fetchnews's query
                 this.startActivity(intent)
             }
             //Clicked the map
@@ -165,21 +212,5 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMap
 
 }
 
-/*6556
-            //Use Kotlin Coroutines
-            (countriesISO.indices).map {
-                launch { //start coroutine
-                    country.add(getLatLongFromAddress(  //retrieve Address object from country name, that contains latitude and longitude (and others stuff)
-                            Locale("", countriesISO[it]).displayCountry)) //translate ISO country in Country name (ex. it=Italia)
-                }
-            }.forEach { runBlocking { it.join() }}
-            //not parallelizable with coroutines: use uithread
-            for (i in country.indices) {
-                runOnUiThread{
-                    mMap.addMarker(MarkerOptions()
-                        .position(LatLng(country[i].latitude, country[i].longitude)) //Set marker position (by lat and long)
-                        .title(country[i].countryCode)).tag = 0 //set de name of  the marker
-                }
-            }*/
 
 

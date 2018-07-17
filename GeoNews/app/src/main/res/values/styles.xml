@@ -12,4 +12,13 @@
     <style name="WVTheme" parent="Theme.AppCompat.Light">
         <item name="android:windowFullscreen">true</item>
     </style>
+
+
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="searchIcon">@drawable/ic_search_black_24dp</item>
+        <item name="searchHintIcon">@null</item>
+        <item name="queryHint">"Search a keyword. Leave blank to view latest headlines."</item>
+        <item name="queryBackground">@color/search_color</item>
+        <item name="goIcon">@drawable/ic_search_black_24dp</item>
+    </style>
 </resources>

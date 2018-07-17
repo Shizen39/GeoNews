@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorShadow">#434343</color>
     <color name="colorUsr">#666666</color>
+    <color name="search_color">#33f7f7f7</color>
 </resources>

@@ -1,3 +1,5 @@
+
+
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,4 +10,17 @@
     map:cameraZoom="1"
     map:mapType="normal"
     map:liteMode="false"
-    tools:context="com.example.giorgio.geonews.Activities.MapActivity.MapsActivity" />
+    tools:context="com.example.giorgio.geonews.Activities.MapActivity.MapsActivity" >
+
+    <android.support.v7.widget.SearchView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/SV_search"
+        style="@style/SearchViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:background="#BFFFFFFF"
+        android:fadingEdge="none|horizontal" />
+</fragment>
+
+
+

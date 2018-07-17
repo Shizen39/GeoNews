@@ -22,14 +22,6 @@ import kotlinx.android.synthetic.main.activity_detail_webview.*
 
 class ArticleDetailActivity : AppCompatActivity() {
 
-/*
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==1)
-            Commenting.fetchComments(this, data!!.getStringExtra("url"))
-
-    }*/
-
     //fBack button on actionBar... For webview, in order to go back in history
     override fun onBackPressed() {
         if (WV_article_detail.canGoBack()) {
