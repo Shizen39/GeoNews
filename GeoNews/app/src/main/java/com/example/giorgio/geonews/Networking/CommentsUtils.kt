@@ -64,11 +64,13 @@ object RetrieveUsrID {
                     Constant().READ_MAX_USR + "?url=" + "\"" + articleUrl + "\"" //usr_id
 
         val req = Request.Builder().url(url).build()
+
         client.newCall(req).execute().use { response -> //do it synchronously because of id needed
             if (!response.isSuccessful) throw IOException("Unexpected code $response")
             val body = response?.body()?.string() //json body response
+            println(body) //TODO: WARNING, BODY IF NULL CHANGES WITH "           \N"
 
-            return if (!body.equals("{\"Usr\":[]}") && !body.equals("{\"Usr\":[{\"usr\":null}]}")) {
+            return if (!body.equals("{\"Usr\":[]}        ") && !body.equals("{\"Usr\":[{\"usr\":null}]}        \n")) {
                 //Bind models and json fields
                 val gson = GsonBuilder().create()
                 val usr = gson.fromJson(body, UsrID::class.java) //from json to java obj
@@ -97,23 +99,47 @@ object RetrieveUsrID {
 object DeleteComment{
     fun deleteComment(context: Activity, articleUrl: String, comment: String, android_id: String) {
 
-        val url = Constant().DELETE + "?url=" + "\"" + articleUrl + "\"" + "&comment=" + "\"" + comment + "\""+ "&android_id=" + "\"" + android_id + "\""
-
         val formBody= FormBody.Builder()
-                .add("url", "\"" +articleUrl+ "\"")
-                .add("comment", "\"" +comment+ "\"")
-                .add("android_id", "\"" +android_id+ "\"")
+                .add("url", articleUrl)
+                .add("comment", comment)
+                .add("android_id", android_id)
                 .build()
 
         val client= OkHttpClient()
         val request= Request.Builder()
-                .url(url)
+                .url(Constant().DELETE)
                 .post(formBody)
                 .build()
 
         client.newCall(request).enqueue(object : Callback { //can't .execute() on the main thread!
             override fun onFailure(call: Call?, e: IOException?) {
                 context.runOnUiThread { Toast.makeText(context, "Failed to fetch data. Retry later.", Toast.LENGTH_LONG).show() }
+            }
+            override fun onResponse(call: Call?, response: Response?) {
+                //Read all comments
+                Commenting.fetchComments(context, articleUrl)
+            }
+        })
+    }
+}
+
+object UpdateComment{
+    fun updateComment(context: Context, newComment: String, oldComment: String, articleUrl: String) {
+        val formBody= FormBody.Builder()
+                .add("newcomment", newComment)
+                .add("oldcomment", oldComment)
+                .add("url", articleUrl)
+                .build()
+
+        val client= OkHttpClient()
+        val request= Request.Builder()
+                .url(Constant().UPDATE)
+                .post(formBody)
+                .build()
+
+        client.newCall(request).enqueue(object : Callback { //can't .execute() on the main thread!
+            override fun onFailure(call: Call?, e: IOException?) {
+                (context as Activity).runOnUiThread { Toast.makeText(context, "Failed to fetch data. Retry later.", Toast.LENGTH_LONG).show() }
             }
             override fun onResponse(call: Call?, response: Response?) {
                 //Read all comments

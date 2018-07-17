@@ -1,6 +1,6 @@
 <?php
 
-//Defining Constants
+//Defining Constants used to connect to the database
  define('HOST','localhost');
  define('USER','root');
  define('PASS','');

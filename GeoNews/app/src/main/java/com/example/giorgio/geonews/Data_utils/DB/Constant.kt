@@ -10,7 +10,7 @@ class Constant {
     val INSERT = BASE_PATH + "addComment.php"
     val READ_ALL = BASE_PATH + "getAllComment.php"
 
-    //val UPDATE = BASE_PATH + "updateComment.php"
+    val UPDATE = BASE_PATH + "updateComment.php"
     val DELETE = BASE_PATH + "deleteComment.php"
 
     val READ_MAX_USR= BASE_PATH + "getMaxUsr.php"

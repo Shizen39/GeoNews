@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.row_comments.view.*
 class RecyclerViewAdapter(val social: Social, val listener: OnItemLongClickListener): RecyclerView.Adapter<RecyclerViewAdapter.CustomViewHolder>() {
 
     interface OnItemLongClickListener {
-        fun onItemClick(item: UsrComment)
+        fun onItemClick(item: UsrComment, update: Boolean,  view: View?)
     }
 
 
@@ -64,17 +64,19 @@ class RecyclerViewAdapter(val social: Social, val listener: OnItemLongClickListe
                 val popupMenu= PopupMenu(view.context, it)
                 popupMenu.setOnMenuItemClickListener { mItem ->
                     when(mItem.itemId){
+                        /** update */
                         R.id.update -> {
                             if(item.android_id== getAndroidID(view.context)){//comment was written by usr
-                                listener.onItemClick(item) //set costumed click listener
+                                listener.onItemClick(item, true, view) //set costumed click listener
                                 Toast.makeText(view.context,"Comment updated!",Toast.LENGTH_LONG).show()
                             }
                             else Toast.makeText(view.context,"Can't update other users comments",Toast.LENGTH_LONG).show()
                             true
                         }
+                        /** delete */
                         R.id.delete -> {
                             if(item.android_id== getAndroidID(view.context)){//comment was written by usr
-                                listener.onItemClick(item) //set costumed click listener
+                                listener.onItemClick(item, false, null) //set costumed click listener
                                 Toast.makeText(view.context,"Comment deleted!",Toast.LENGTH_LONG).show()
                             }
                             else Toast.makeText(view.context,"Can't delete other users comments",Toast.LENGTH_LONG).show()
@@ -89,7 +91,7 @@ class RecyclerViewAdapter(val social: Social, val listener: OnItemLongClickListe
 
                 popupMenu.inflate(R.menu.menu_main)
 
-                //In order to show Icons. :l
+                //In order to show Icons. Meh.
                 try {
                     val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
                     fieldMPopup.isAccessible = true

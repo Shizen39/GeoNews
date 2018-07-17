@@ -20,6 +20,7 @@ import com.example.giorgio.geonews.Data_utils.DB.getColor
 import com.example.giorgio.geonews.Networking.CheckNetworking
 import com.example.giorgio.geonews.Networking.CreateComment
 import com.example.giorgio.geonews.Networking.RetrieveUsrID
+import com.example.giorgio.geonews.Networking.UpdateComment
 import com.example.giorgio.geonews.R
 import kotlinx.android.synthetic.main.row_comments.*
 
@@ -39,6 +40,8 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
     lateinit var c: Constant
     lateinit var android_id: String
     lateinit var articleUrl: String
+    var updating= false
+    lateinit var oldComm: String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -76,15 +79,26 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
      */
     override fun onClick(v: View?) {
         ArticleDetailActivity().hideSystemUI(activity.window.decorView, false)
-         if (!commentInput.text.isBlank()) { //If user has written something
-             if(CheckNetworking.isNetworkAvailable(this.context)){ //post the comment if there's interne connection
-                 val usrId= getUsrID() //get user id by it's android_id + article url
-                 my_img.text=usrId //set personal userId near of edittext
-                 CreateComment.post(context, commentInput.text.toString(), articleUrl, android_id, usrId) //make a post request
-             }
-             else Toast.makeText(this.context, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
-             commentInput.text.clear()  //clear edit text input
-         }
+        if(!updating) { //User start tiping new comment
+            if (!commentInput.text.isBlank()) { //If user has written something
+                if (CheckNetworking.isNetworkAvailable(this.context)) { //post the comment if there's interne connection
+                    val usrId = getUsrID() //get user id by it's android_id + article url
+                    my_img.text = usrId //set personal userId near of edittext
+                    CreateComment.post(context, commentInput.text.toString(), articleUrl, android_id, usrId) //make a post request
+                } else Toast.makeText(this.context, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
+            }
+        }
+        else {  //User is updating his comment
+            println(commentInput.text.toString())
+            println(oldComm)
+            if (commentInput.text.toString() != oldComm) { //If user has updated the comment
+                if (CheckNetworking.isNetworkAvailable(this.context)) //post the comment if there's interne connection
+                    UpdateComment.updateComment(this.context, commentInput.text.toString(), oldComm, articleUrl)
+                else Toast.makeText(this.context, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
+            }
+            updating=false
+        }
+        commentInput.text.clear()  //clear edit text input
         //Hide keyboard after send comment
         val editV= this.activity.currentFocus
         if(editV!=null){
