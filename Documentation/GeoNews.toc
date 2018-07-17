@@ -1,0 +1,8 @@
+\babel@toc {italian}{}
+\babel@toc {italian}{}
+\contentsline {section}{\numberline {1}Introduzione}{3}{section.1}
+\contentsline {section}{\numberline {2}Architettura}{4}{section.2}
+\contentsline {section}{\numberline {3}Il client: l'app Android}{5}{section.3}
+\contentsline {subsection}{\numberline {3.1}Networking}{5}{subsection.3.1}
+\contentsline {subsubsection}{\numberline {3.1.1}Reperimento degli articoli}{5}{subsubsection.3.1.1}
+\contentsline {section}{\numberline {4}Il server per la condivisione dei consigli}{6}{section.4}

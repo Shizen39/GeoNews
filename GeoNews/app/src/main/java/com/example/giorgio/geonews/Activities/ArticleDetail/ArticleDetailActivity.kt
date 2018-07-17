@@ -1,7 +1,6 @@
 package com.example.giorgio.geonews.Activities.ArticleDetail
 
 import android.app.Fragment
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -23,13 +22,13 @@ import kotlinx.android.synthetic.main.activity_detail_webview.*
 
 class ArticleDetailActivity : AppCompatActivity() {
 
-
+/*
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode==1)
             Commenting.fetchComments(this, data!!.getStringExtra("url"))
 
-    }
+    }*/
 
     //fBack button on actionBar... For webview, in order to go back in history
     override fun onBackPressed() {

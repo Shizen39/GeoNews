@@ -1,0 +1,69 @@
+% !TeX spellcheck = IT
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{graphicx}
+\usepackage{float} 
+\usepackage[colorlinks=true,linkcolor=blue]{hyperref}
+\usepackage{nameref} 
+\graphicspath{{./images/}}
+\def\code#1{\texttt{#1}}
+\def\image[#1][#2]#3{
+  \begin{figure}[H]
+  \centering
+  \includegraphics[#2]{#1}
+  \caption{#3}
+  \end{figure}}
+
+\title{GeoNews: \\Trova e leggi sempre le news \\da tutto il mondo}
+\author{Giorgio Mazza}
+
+\begin{document}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+\section{Introduzione}
+GeoNews è un'applicazione Android in grado di ricercare notizie e articoli da oltre 30.000 fonti, testate giornalistiche e blog provenienti da tutto il mondo.\\
+La peculiarità di GeoNews è quella di mostrare le notizie in tempo reale, posizionate contestualmente su di una mappa del Globo in base alla località di provenienza dell'articolo.\\
+L'utente potrà così rimanere aggiornato su ciò che accade nel mondo, in modo non più dispersivo ma bensì contestualizzato e mirato. Infatti sarà l'utente a decidere di quale parte del mondo leggere le ultime notizie.\\
+GeoNews infine, si propone anche come community in cui gli utenti potranno esprimere il proprio parere su ciò che gli accade intorno, mediante il sistema di commenti integrato in ogni articolo.
+	
+\newpage
+\section{Architettura}
+L'architettura di GeoNews è rappresentata in figura:
+%\image[.png][scale=0.5]
+Il dispositivo Android funge da Client a due diversi server: uno hostato su http://newsapi.org mediante il quale reperisce gli ultimi articoli ed uno sviluppato appositamente per GeoNews  e hostato su http://geonews.altervista.org volto alla gestione della sezione commenti presente in ogni articolo.
+
+
+
+\newpage
+\section{Il client: l'app Android}
+Gli aspetti client dell'applicazione riguardano la comunicazione con i due server	
+	\subsection{Networking}
+	News API è un sito che mette a disposizione delle API REST che ritornato metadati in formato JSON da oltre 30.000 sorgenti, testate giornalistiche e blogs.\\
+	Per questo motivo si è deviso di basare le comunicazioni tra il client ed i due server sullo scambio di JSON;
+	Per fare il parsing di quest'ultimo, il client si serve della libreria open source \textbf{Gson} di Google.\\
+	Per quanto rigurada il networking, si sono utilizzate due librerie in particolare:
+	\begin{itemize}
+	\item\textbf{OkHttp}: client http efficiente e di facile utilizzo
+	\item\textbf{Picasso}: usato per il caricamento efficace delle immagini
+	\end{itemize}
+\subsubsection{Reperimento degli articoli}
+Per quanto riguarda le operazioni di reperimento degli articoli, queste sono svolte all'interno del file \code{FetchArticles.kt} che effettuerà una chiamata \textbf{GET} in forma\\ \code{http://newsapi.org/v2/\textbf{end-point} ? \textbf{user-queries} \& apiKey=chiave-privata} dove:
+\begin{itemize}
+\item[-]\textbf{end-point} rappresenta uno degli end-point messi a disposizione da newsapi.org, dei quali -in questo caso- è stato utilizzato \textit{top-headlines} che fornisce le top news sottoforma di titolo, descrizione e link all'articolo.
+\item[-]\textbf{user-queries} sono le queries che l'utente può fare alle API a fini di ricerca mirata di news. In questo caso, è stata utilizzata la query \code{country="zona della mappa selezionata"} per visualizzare le news di quella specifica zona.
+\end{itemize}
+Dopo di che, la stringa JSON sarà passata alla funzione gson di Gson, che effettuerà il parsing in oggetti utilizzabili in Kotlin.\\
+Una volta selezionato un articolo, sarà visualizzato sottoforma di \textit{WebView}.
+\subsubsection{Gestione dei commenti}
+Per quanto riguarda la sezione commenti, l'app mette a disposizione un \textit{Fragment} che l'utente può nascondere o visualizzare durante la lettura dell'articolo;\\
+QUesto, contiente all'interno l'elenco dei commenti già scritti in relazione a quel determinato articolo, ed un \textit{EditText} attraverso il quale l'utente può postare sul server hostato su altervista i propri commenti.\\
+Il riperimento dei commenti già presenti, è effettuato nel file \code{FetchComments.kt}
+	
+\newpage
+\section{Il server per la condivisione dei consigli}
+
+
+\end{document}
