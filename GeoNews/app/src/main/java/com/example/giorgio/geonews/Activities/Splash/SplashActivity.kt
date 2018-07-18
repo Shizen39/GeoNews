@@ -1,15 +1,18 @@
-package com.example.giorgio.geonews.Activities.Main
+package com.example.giorgio.geonews.Activities.Splash
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.example.giorgio.geonews.Activities.MapActivity.MapsActivity
-import com.example.giorgio.geonews.R
 
-class MainActivity : AppCompatActivity() {
+class SplashActivity : AppCompatActivity() {
 
     //Set FullScreen
+
+
+
+
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) window.decorView.systemUiVisibility= (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY     //fullscreen mode
@@ -20,36 +23,15 @@ class MainActivity : AppCompatActivity() {
                 )
     }
 
-
-
-
     //OnCreate func
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
         onWindowFocusChanged(true)
 
-
-
-
-
-
-
-
-        //Send intent whit selected country to articleDetailActivity
         val intent= Intent(this, MapsActivity::class.java)
         this.startActivity(intent)
+        this.finish()
 
-
-
-
-
-
-/*
-        //Send intent whit selected country to articleDetailActivity
-        val intent= Intent(this, ListArticlesActivity::class.java)
-        intent.putExtra(COUNTRY_KEY, "it")
-        this.startActivity(intent)
-*/
     }
 }

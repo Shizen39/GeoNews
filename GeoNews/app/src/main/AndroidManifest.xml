@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.Main.MainActivity">
+        <activity android:name=".Activities.Splash.SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -40,7 +41,7 @@
             android:launchMode="singleTop"> <!-- Otherwise system always creates a new instance of the activity in the target task -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.Main.MainActivity" />
+                android:value=".Activities.Splash.SplashActivity" />
         </activity>
 
         <!--

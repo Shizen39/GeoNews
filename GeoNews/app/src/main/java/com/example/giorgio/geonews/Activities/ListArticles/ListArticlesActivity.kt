@@ -17,6 +17,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+
+
+
+
 class ListArticlesActivity : AppCompatActivity() {
 
     //Set FullScreen
@@ -44,19 +48,36 @@ class ListArticlesActivity : AppCompatActivity() {
         val e=intent.extras
         val country= e.getString(COUNTRY_KEY)
         val queries= e.getString(QUERIES_KEY)
+
         title = Locale("", country).displayCountry
         if(CheckNetworking.isNetworkAvailable(this))
             //Fetch articles and add a new adapter in RV_news (in fetchArticles.onBind)
             if(queries=="" || queries==null)
                 Networking.fetchArticles(this, getString(R.string.headlines), "country=$country&pageSize=100&")
             else{
+                title= "$title - $queries"
                 val df = SimpleDateFormat("yyyy-MM-dd", Locale("", country))
                 val cal = Calendar.getInstance()
                 cal.add(Calendar.DATE, -1) //get from yesterday news
                 val date = df.format(cal.time)
-                Networking.fetchArticles(this, getString(R.string.everything), "language=$country&q=$queries&from=$date&pageSize=100&")
+                val language= getLang(country)
+                Networking.fetchArticles(this, getString(R.string.everything), "language=$language&q=+$queries&from=$date&sortBy=publishedAt&sortBy=relevancy&pageSize=50&")
             }
         else Toast.makeText(this, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
 
+    }
+
+
+    /**
+     * Get language from country, end-point everything works only with language, not country
+     */
+    fun getLang(country: String): String? {
+        val all = Locale.getAvailableLocales()
+        for (locale in all) {
+            if (locale.toString() == country) {
+                return locale.language
+            }
+        }
+        return "en"
     }
 }

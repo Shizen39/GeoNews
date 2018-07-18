@@ -28,7 +28,6 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Insert your comment"
-        android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/send_comment"
         app:layout_constraintStart_toEndOf="@+id/my_image"

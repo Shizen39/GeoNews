@@ -1,6 +1,7 @@
 package com.example.giorgio.geonews.Networking
 
 import android.app.Activity
+import android.util.Log
 import android.widget.Toast
 import com.example.giorgio.geonews.Activities.ListArticles.adapters.RecyclerViewAdapter
 import com.example.giorgio.geonews.Data_utils.News
@@ -27,6 +28,7 @@ object Networking {
         // Performs HTTP request (GET) and return a JSON response.
         val client = OkHttpClient()
         val request = Request.Builder().url(URL).build()
+        Log.w("URL", URL)
 
         client.newCall(request).enqueue(object : Callback { //can't .execute() on the main thread!
             override fun onFailure(call: Call?, e: IOException?) {
