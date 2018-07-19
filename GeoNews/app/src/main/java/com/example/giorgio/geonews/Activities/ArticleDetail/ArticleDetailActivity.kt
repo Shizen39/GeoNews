@@ -16,26 +16,28 @@ import kotlinx.android.synthetic.main.activity_detail_webview.*
 
 
 /**
- * Activity that show the opened article with a webview
+ * Created by giorgio on 02/07/18.
+ * Activity that shows the selected article with a webView
+ * ArticleDetailActivity -> ArticleCommentFragment
+ * ArticleDetailActivity -> Commenting.fetchComments (articleUrl)
+ * GeoNews
  */
-
 
 class ArticleDetailActivity : AppCompatActivity() {
 
-    //fBack button on actionBar... For webview, in order to go back in history
+    /** change fBack button on actionBar behavior; For webview, in order to go back in history */
     override fun onBackPressed() {
         if (WV_article_detail.canGoBack()) {
             hideSystemUI(window.decorView,true)
             WV_article_detail.goBack()
-        } else {
-
-            // Otherwise defer to system default behavior.
+        } else {                                                // Otherwise defer to system default behavior.
             hideSystemUI(window.decorView,true)
             super.onBackPressed()
 
         }
     }
 
+    //Function to handle UI behavior
     fun hideSystemUI(decorView: View, hasFocus: Boolean) {
         if (hasFocus) decorView.systemUiVisibility= (
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
@@ -49,18 +51,15 @@ class ArticleDetailActivity : AppCompatActivity() {
                 )
     }
 
-    //OnCreate func
+    /** OnCreate func */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         hideSystemUI(window.decorView,true)
         setContentView(R.layout.activity_detail_webview)
 
+        WV_article_detail.webViewClient = WebViewClient()                                // prevent opening in default browser
 
-
-        //prevent opening in default browser
-        WV_article_detail.webViewClient = WebViewClient()
-
-        //add some settings for webpages
+        /* add some settings for webpages */
         val settings= WV_article_detail.settings
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             settings.safeBrowsingEnabled = false
@@ -72,29 +71,22 @@ class ArticleDetailActivity : AppCompatActivity() {
         settings.setAppCacheEnabled(true)
         settings.setAppCachePath("")
 
-        //get url from intent of RV_Adapter
-        val articleUrl= intent.getStringExtra(CustomViewHolder.ARTICLE_LINK_KEY)
-
-        //load webview's url
-        if(CheckNetworking.isNetworkAvailable(this))
+        val articleUrl= intent.getStringExtra(CustomViewHolder.ARTICLE_LINK_KEY)        // get url from intent of RV_Adapter
+        if(CheckNetworking.isNetworkAvailable(this))                             // load webview's url
             WV_article_detail.loadUrl(articleUrl)
         else Toast.makeText(this, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
 
         //set actionbar title
         title= if (articleUrl.contains("http://")) articleUrl.removePrefix("http://")  else articleUrl.removePrefix("https://")
 
-        //get fragment
+        /* Get comments fragment */
         val ft = fragmentManager.beginTransaction()
         val frag= fragmentManager.findFragmentById(R.id.F_comments) as (ArticleCommentFragment)
 
-        //pass url to comment fragment
-        frag.articleUrl=articleUrl
-        //and hide it
-        ft.hide(frag)
+        frag.articleUrl=articleUrl                                                      // pass Articleurl to comment fragment so it can use it
+        ft.hide(frag)                                                                   // and hide it
         ft.commit()
-
-        //Set the hide/show button for comments
-        addShowHideListener(R.id.F_Button, frag, articleUrl)
+        addShowHideListener(R.id.F_Button, frag, articleUrl)                            // Set the hide/show button for comments
 
     }
 
@@ -105,23 +97,20 @@ class ArticleDetailActivity : AppCompatActivity() {
         val button = findViewById<View>(buttonId) as FloatingActionButton
         button.setOnClickListener {
             val ft = fragmentManager.beginTransaction()
-            ft.setCustomAnimations(android.R.animator.fade_in,
-                    android.R.animator.fade_out)
-            if (fragment.isHidden) {
+            ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+            if (fragment.isHidden) {                                                            //show comments
                 if(CheckNetworking.isNetworkAvailable(this))
-                    Commenting.fetchComments(this, articleUrl) //fetch new comments and VIEW them (in fetchComments.onResponse)
-                else Toast.makeText(this, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
-
-                ft.show(fragment)   //show comments
-                hideSystemUI(window.decorView,false) //show navbar
-                ft.addToBackStack(null) //for navbar back button to hide fragment
-            } else {
-                ft.hide(fragment)   //hide comments
+                    Commenting.fetchComments(this, articleUrl)                           //fetch new comments and VIEW them (in fetchComments.onResponse)
+                else Toast.makeText(this, "No internet connection. " +
+                        "Please check and try again.", Toast.LENGTH_LONG).show()
+                ft.show(fragment)
+                hideSystemUI(window.decorView,false)                                    //show navbar
+                ft.addToBackStack(null)                                                    //for navbar back button to hide fragment
+            } else {                                                                             //hide comments
+                ft.hide(fragment)
                 hideSystemUI(window.decorView,true) //hide navbar
             }
             ft.commit()
         }
     }
-
-
 }

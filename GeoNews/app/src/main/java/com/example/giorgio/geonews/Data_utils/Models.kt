@@ -4,6 +4,7 @@ package com.example.giorgio.geonews.Data_utils
  * Created by giorgio on 01/07/18.
  * Model;
  * Custom data class that represents an article from a news source.
+ * GeoNews
  */
 
 class News(val articles: List<Article>)

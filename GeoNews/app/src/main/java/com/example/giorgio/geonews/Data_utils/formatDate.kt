@@ -6,6 +6,8 @@ import org.joda.time.format.DateTimeFormat
 
 /**
  * Created by giorgio on 02/07/18.
+ * Date formatter
+ * GeoNews
  */
 
 object formatter{
@@ -23,9 +25,9 @@ object formatter{
             // Uses one of DateUtils' static methods to compare how long ago the article was published.
             // Time spans in the past are formatted like "42 minutes ago". Time spans in the future are formatted like "In 42 minutes".
             val relativeTime = DateUtils.getRelativeTimeSpanString(
-                    millisecondsSinceUnixEpoch,//article time
-                    System.currentTimeMillis(),//now
-                    MINUTE_IN_MILLIS) // Minimum time to be displayed (secs == "0min ago")
+                    millisecondsSinceUnixEpoch,         //article time
+                    System.currentTimeMillis(),         //now
+                    MINUTE_IN_MILLIS)                   // Minimum time to be displayed (secs == "0min ago")
 
             // Initially converts relativeTime to a String to possibly set the following TextView as "just now!". Otherwise, sets the publish time as is.
             val relativeTimeString = relativeTime.toString()
@@ -45,8 +47,6 @@ object formatter{
      * two chars of seconds in order to satisfy DateTimeFormat's format.
      *
      * takes utcDateTime is the UTC date-time according to ISO 8601 standards.
-     *
-     * throws IndexOutOfBoundsException since some custom indexing will be out of bounds of the # of time-attribute parts.
      */
     @Throws(IndexOutOfBoundsException::class)
     private fun formatUTCDateTime(utcDateTime: String?): String {

@@ -21,6 +21,8 @@ import java.io.IOException
 
 /**
  * Created by giorgio on 09/07/18.
+ * Singleton class that consists of helper methods used for requesting and retrieving comments data from geonews.altervista.org
+ * (*) fetchComments.onResponse() -> ArticleDetail.RV_Adatper -  onBindViewHolder().bind() -> (Interface) OnItemLongClickListener -> OnItemClick -> popupMenu
  */
 
 object Commenting{
@@ -32,37 +34,38 @@ object Commenting{
         val client = OkHttpClient()
         val req = Request.Builder().url(url).build()
 
-        client.newCall(req).enqueue(object : Callback {  // cannot use .execute() in the UI thread
+        client.newCall(req).enqueue(object : Callback {                         // cannot use .execute() in the UI thread
             override fun onResponse(call: Call?, response: Response?) {
-                val body = response?.body()?.string() //json body response
+                val body = response?.body()?.string()                           // json body response
                 val social:Social
-                if (!body.equals("{\"comments\":[]}")) {
-                    //Bind models and json fields
+                if (!body.equals("{\"comments\":[]}")) {                   // if list of comments isn't empty
                     val gson = GsonBuilder().create()
-                    social = gson.fromJson(body, Social::class.java) //from json to java obj
+                    social = gson.fromJson(body, Social::class.java)             // Bind models and json fields
                 }
-                else{   //Comment placeholder
+                else{                                                            // Comment placeholder (nothing to show)
                     val comment= listOf(UsrComment("0","Nothing to show", "http://www.nope.it", "nope", " ", " "))
                     social= Social(comment)
                 }
 
-                //Send obj to the adapter in a background thread
-                (context as Activity).runOnUiThread {  //= RecyclerViewAdapter(social)
+                /* Send obj to the adapter in a background thread */
+                (context as Activity).runOnUiThread {                            /** Implementation of OnItemLongClickListener.onItemCLick() */
                     context.RV_comments.adapter = RecyclerViewAdapter(social,  object : RecyclerViewAdapter.OnItemLongClickListener {
+                        /** (*) Implements onItemClicks function of RV_Adapter.OnItemLongClickListener().OnItemClick() */
                         override fun onItemClick(item: UsrComment, update: Boolean, view: View?) {
-                            if(update) {
+                            if(update) {                                         // Usr popupMenu is Update
                                 val frag= context.fragmentManager.findFragmentById(R.id.F_comments) as (ArticleCommentFragment)
                                 frag.commentInput.setText(item.comment)
-                                //request edittext focus and show keyboard
+                                /* request editText focus and show keyboard */
                                 frag.commentInput.requestFocus()
                                 val imm = frag.view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                 imm.showSoftInput(frag.commentInput, InputMethodManager.SHOW_IMPLICIT)
-                                //make flag updating true so the user can modify the comment in the textview (updateComment ->commentFragment.sendB.onCLick())
+                                /* make flag updating true so the user can modify the comment in the textview
+                                (updateComment ->commentFragment.sendB.onCLick()) */
                                 frag.updating=true
                                 frag.oldItem= item
-                            }else{
+                            }else{                                               // Usr popupMenu is Delete
                                 if(CheckNetworking.isNetworkAvailable(context))
-                                    DeleteComment.deleteComment(context, item.url, item.id)//MakeNetworkRequestAsyncTask().execute(item.url, item.comment, item.android_id).get()
+                                    DeleteComment.deleteComment(context, item.url, item.id)
                                 else Toast.makeText(context, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
                             }
                         }

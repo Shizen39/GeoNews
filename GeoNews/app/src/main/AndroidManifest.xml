@@ -28,6 +28,7 @@
         </activity>
         <activity
             android:name=".Activities.ArticleDetail.ArticleDetailActivity"
+            android:configChanges="orientation|screenSize"
             android:theme="@style/Theme.AppCompat.Light"
             android:windowSoftInputMode="adjustResize">
             <meta-data
@@ -36,6 +37,7 @@
         </activity>
         <activity
             android:name=".Activities.ListArticles.ListArticlesActivity"
+            android:configChanges="orientation|screenSize"
             android:theme="@style/Theme.AppCompat.Light"
             android:windowSoftInputMode="adjustResize"
             android:launchMode="singleTop"> <!-- Otherwise system always creates a new instance of the activity in the target task -->
@@ -58,6 +60,7 @@
 
         <activity
             android:name=".Activities.MapActivity.MapsActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_maps"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -67,9 +70,7 @@
                 android:resource="@xml/searchable"
                 android:value="com.example.giorgio.geonews.Activities.Main.MainActivity" />
         </activity>
-        <activity android:name=".Activities.MapActivity.DayNightCycleActivity" />
-        <activity android:name=".Activities.MapActivity.BasicGlobeActivity" />
-        <activity android:name=".Activities.MapActivity.AbstractMainActivity"></activity>
+
     </application>
 
 </manifest>

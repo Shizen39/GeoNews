@@ -8,16 +8,18 @@ import android.provider.Settings
 
 /**
  * Created by giorgio on 10/07/18.
+ * Usr local utilities
+ * GeoNews
  */
 
-
+/** Get android HW id */
 @SuppressLint("HardwareIds")
 fun getAndroidID(context: Context): String? {
     return Settings.Secure.getString(context.contentResolver,
             Settings.Secure.ANDROID_ID)
 }
 
-
+/** Get personal color from getAndroidID() and articleUrl */
 fun getColor(android_id: String, url:String): Int {
     var seed:String = Regex("[^a-z0-9]").replace(url, "")
     seed = if(seed.length<=70) //otherwise cannot find color
@@ -37,16 +39,12 @@ fun getColor(android_id: String, url:String): Int {
     }
 }
 
+/** Generate pseudo random colors from hashcode */
 private fun intToARGB(i: Int): String {
     return Integer.toHexString(i shr 16 and 0xFF) +
             Integer.toHexString(i shr 8 and 0xFF) +
             Integer.toHexString(i and 0xFF)
 }
 
-
-/*
-
-
-*/
 
 

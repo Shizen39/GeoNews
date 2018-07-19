@@ -15,7 +15,4 @@ class Constant {
 
     val READ_MAX_USR= BASE_PATH + "getMaxUsr.php"
     val READ_USR= BASE_PATH + "getUsr.php"
-
-
-
 }
