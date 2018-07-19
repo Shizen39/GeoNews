@@ -22,7 +22,9 @@ import java.io.IOException
 /**
  * Created by giorgio on 09/07/18.
  * Singleton class that consists of helper methods used for requesting and retrieving comments data from geonews.altervista.org
- * (*) fetchComments.onResponse() -> ArticleDetail.RV_Adatper -  onBindViewHolder().bind() -> (Interface) OnItemLongClickListener -> OnItemClick -> popupMenu
+ * (# clickInterface) this.onResponse().adapter(object) --> ArticleDetail.RV_Adatper -
+ *                                  - (which calls -> onBindViewHolder().bind() that create -> (Interface) OnItemLongClickListener -> OnItemClick -> popupMenu )
+ * (3) this.onResponse().adapter        -> commentFragment.sendB.onCLick())
  */
 
 object Commenting{
@@ -48,25 +50,25 @@ object Commenting{
                 }
 
                 /* Send obj to the adapter in a background thread */
-                (context as Activity).runOnUiThread {                            /** Implementation of OnItemLongClickListener.onItemCLick() */
-                    context.RV_comments.adapter = RecyclerViewAdapter(social,  object : RecyclerViewAdapter.OnItemLongClickListener {
-                        /** (*) Implements onItemClicks function of RV_Adapter.OnItemLongClickListener().OnItemClick() */
-                        override fun onItemClick(item: UsrComment, update: Boolean, view: View?) {
-                            if(update) {                                         // Usr popupMenu is Update
+                (context as Activity).runOnUiThread {
+                    context.RV_comments.adapter = RecyclerViewAdapter(social,
+                            object : RecyclerViewAdapter.OnItemLongClickListener {                  /** (#) -> Implements (CustomViewHolder).OnItemLongClickListener.onItemCLick() */
+                        override fun onItemClick(item: UsrComment, update: Boolean, view: View?) {  /** (3)(4) -> Implements onItemClicks function */
+                                                if(update) {                                         // Usr popupMenu is Update
                                 val frag= context.fragmentManager.findFragmentById(R.id.F_comments) as (ArticleCommentFragment)
                                 frag.commentInput.setText(item.comment)
                                 /* request editText focus and show keyboard */
                                 frag.commentInput.requestFocus()
                                 val imm = frag.view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                 imm.showSoftInput(frag.commentInput, InputMethodManager.SHOW_IMPLICIT)
-                                /* make flag updating true so the user can modify the comment in the textview
-                                (updateComment ->commentFragment.sendB.onCLick()) */
-                                frag.updating=true
+                                /* "updating" true so user can modify  comment in commentFragment */
+                                frag.updating=true                                                  /** (3) updateComment() called on -> commentFragment.sendB.onCLick()) */
                                 frag.oldItem= item
-                            }else{                                               // Usr popupMenu is Delete
+                            }else{                                                                  // Usr popupMenu is Delete
                                 if(CheckNetworking.isNetworkAvailable(context))
-                                    DeleteComment.deleteComment(context, item.url, item.id)
-                                else Toast.makeText(context, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
+                                    DeleteComment.deleteComment(context, item.url, item.id)         /** (4) -> CommentsUtils.deleteComment() */
+                                else Toast.makeText(context, "No internet connection. " +
+                                        "Please check and try again.", Toast.LENGTH_LONG).show()
                             }
                         }
                     })

@@ -19,6 +19,7 @@ import java.io.IOException
 
 /**
  * @CREATE a new comment, posting it on the DB
+ * <- ArticleCommentFragment.onClick()
  */
 object CreateComment{
     fun createComment(context: Context, commentInput:String, articleUrl: String, android_id: String, usrId:String){
@@ -48,6 +49,7 @@ object CreateComment{
 
 /**
  * @READ all users id of actual article comments, and return the user id of the user that have posted a comment
+ * <- ArticleCommentFragment.GetUsrID()
  */
 object RetrieveUsrID {
     /* Fetch all usrID SYNCHRONOUSLY */
@@ -88,7 +90,10 @@ object RetrieveUsrID {
     }
 }
 
-
+/**
+ * @DELETE a usr comment
+ * <- ArticleCommentFragment.onClick()
+ */
 object DeleteComment{
     fun deleteComment(context: Activity, articleUrl: String, id: String) {
         val formBody= FormBody.Builder()
@@ -113,6 +118,10 @@ object DeleteComment{
     }
 }
 
+/**
+ * @UPDATE a usr comment
+ * <- fetchComments.onResponse().adapter.onItemClick()
+ */
 object UpdateComment{
     fun updateComment(context: Context, newComment: String, id: String, articleUrl: String) {
         val formBody= FormBody.Builder()

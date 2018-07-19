@@ -18,8 +18,8 @@ import kotlinx.android.synthetic.main.activity_detail_webview.*
 /**
  * Created by giorgio on 02/07/18.
  * Activity that shows the selected article with a webView
- * ArticleDetailActivity -> ArticleCommentFragment
- * ArticleDetailActivity -> Commenting.fetchComments (articleUrl)
+ * THIS -> ArticleCommentFragment
+ * THIS -> Commenting.fetchComments (articleUrl)
  * GeoNews
  */
 

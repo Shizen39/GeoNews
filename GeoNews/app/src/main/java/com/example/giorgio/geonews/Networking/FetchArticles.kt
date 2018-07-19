@@ -14,7 +14,8 @@ import java.io.IOException
 /**
  * Created by giorgio on 02/07/18.
  * Singleton class that consists of helper methods used for requesting and retrieving article data from the News API
- * (*) fetchArticles.onResponse() -> ListArticle.RV_Adapter - setOnItemClickListener(Article) (ListArticle.adapters.RV_Adapter)
+ *
+ * (#) this.onResponse().adapter -> ListArticle.RV_adapter.CustomViewHolder.setOnItemClickListener()
  * GeoNews
  */
 
@@ -35,7 +36,7 @@ object Networking {
                 val gson = GsonBuilder().create()
 
                 val news = gson.fromJson(body, News::class.java)                                //Bind models and json fields
-                context.runOnUiThread {context.RV_news.adapter= RecyclerViewAdapter(news) }     //Send obj to the adapter in a background thread
+                context.runOnUiThread {context.RV_news.adapter= RecyclerViewAdapter(news) }     /** (#) -> ListArticles.RV_Adapter */ //Send obj to the adapter in a background thread
             }
 
             override fun onFailure(call: Call?, e: IOException?) {

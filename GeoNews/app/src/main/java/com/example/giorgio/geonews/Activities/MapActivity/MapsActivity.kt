@@ -168,16 +168,16 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMap
                 }
             } else Toast.makeText(baseContext, "No internet connection. Check and try again.", Toast.LENGTH_LONG).show()
 
-        mMap.setOnMarkerClickListener(this)                    // click listener on map's markers. Override ->
+        mMap.setOnMarkerClickListener(this)                     // click listener on map's markers. Override ->
     }
 
     /**
      * Retrieve Address object from country name, that contains latitude and longitude (and others stuff)
      */
-    private fun getLatLng(i:Int): Address {                                      // for getting latitude and longitude
-        val geocoder = Geocoder(this)                                    // used to retrieve position from location name
+    private fun getLatLng(i:Int): Address {                                    // for getting latitude and longitude
+        val geocoder = Geocoder(this)                                   // used to retrieve position from location name
         val address= Locale("", countriesISO[i]).displayCountry        // get country Name from countryIso
-        return geocoder.getFromLocationName(address, 1)[0]           // from country Name return LatLong
+        return geocoder.getFromLocationName(address, 1)[0]            // from country Name return LatLong
     }
 
     /**
@@ -212,17 +212,17 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMap
                             + Locale("", marker.title).displayCountry,
                     Toast.LENGTH_SHORT).show()
 
-            if(clickCount==2){                                                              //was already clicked, clicked another time
-                val intent= Intent(this, ListArticlesActivity::class.java)     //Send intent with selected country to articleDetailActivity
+            if(clickCount==2){                                                              // was already clicked, clicked another time
+                val intent= Intent(this, ListArticlesActivity::class.java)     // Send intent with selected country to articleDetailActivity
                 val e=Bundle()
                 e.putString(QUERIES_KEY, queries)
                 e.putString(COUNTRY_KEY, marker.title.toLowerCase())
-                intent.putExtras(e)                                                         //send country iso code and eventually the queries to fetchnews's query
+                intent.putExtras(e)                                                         // send country iso code and eventually the queries to fetchnews's query
                 this.startActivity(intent)
-                clickCount -= 1                                                             //restore clicked status
-                marker.tag = clickCount                                                     //bind with marker data
+                clickCount -= 1                                                             // restore clicked status
+                marker.tag = clickCount                                                     // bind with marker data
             }
-            mMap.setOnMapClickListener {                                                    //Clicked the map, not a marker
+            mMap.setOnMapClickListener {                                                    // Clicked the map, not a marker
                 onWindowFocusChanged(true)
                 clickCount -= 1
                 marker.tag = clickCount
@@ -230,7 +230,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMap
                else marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
             }
         }
-        // Return false: we have not consumed the event and we wish for the default behavior to occur
+        /* Return false: we have not consumed the event and we wish for the default behavior to occur */
         return false
     }
 

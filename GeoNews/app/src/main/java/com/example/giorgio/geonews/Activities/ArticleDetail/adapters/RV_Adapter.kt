@@ -20,16 +20,20 @@ import kotlinx.android.synthetic.main.row_comments.view.*
  * Created by giorgio on 03/07/18.
  * The adapter creates new items in the form of ViewHolders,
  * populates the ViewHolders with data, and returns information about the data.
- * (* fetchComments.onResponse()) --> onBindViewHolder() -> customViewHolder.bind() -> onItemLongClickListener().onItemClick()
+ * (# clickInterface)  (#1) this.onBindViewHolder() calls
+ *                  -> (#2) customViewHolder.bind() that sets
+ *                  -> (#3) onItemLongClickListener().onItemClick()
+ *                          defined in (#0)
+ *                                          --> implemented in (#) fetchComments.onResponse().adapter(object)
  * GeoNews
  */
 class RecyclerViewAdapter(val social: Social, val listener: OnItemLongClickListener): RecyclerView.Adapter<RecyclerViewAdapter.CustomViewHolder>() {
 
     /** Interface to handle clicks and passing items on customViewHolde !!!!
      * Interface passed in:            CustomViewHolder.bind()
-     * Function implemented in:        Commenting.fetchComments().onResponse()
+     * Function implemented in:        fetchComments().onResponse().adapter(interface)
      */
-    interface OnItemLongClickListener {
+    interface OnItemLongClickListener {                                                         /** (#0) <- */
         fun onItemClick(item: UsrComment, update: Boolean,  view: View?)
     }
 
@@ -49,7 +53,7 @@ class RecyclerViewAdapter(val social: Social, val listener: OnItemLongClickListe
         holder.view.date.text=formatDate(comment.date)
         holder.view.user_image.background.setTint(getColor(comment.android_id, comment.url))    //Get usr_color by comment url and usr_android_id
 
-        holder.bind(social.comments[position], listener)                                        //bind listener interface with selected comment
+        holder.bind(social.comments[position], listener)                                        /** (#1) -> */ //bind listener interface with selected comment
     }
 
     /* this method give size of the list */
@@ -62,15 +66,15 @@ class RecyclerViewAdapter(val social: Social, val listener: OnItemLongClickListe
      *
      */
     class CustomViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(item: UsrComment, listener: OnItemLongClickListener) {                         // !Called in onBindViewHolder(), bind selected item and an itemCliclLIstener
+        fun bind(item: UsrComment, listener: OnItemLongClickListener) {                          /** -> (#2) -> */ // !Called in onBindViewHolder(), bind selected item and an itemCliclLIstener
             view.setOnLongClickListener {
                 /* Create a popupMenu */
                 val popupMenu= PopupMenu(view.context, it)
-                popupMenu.setOnMenuItemClickListener { mItem ->
+                popupMenu.setOnMenuItemClickListener { mItem ->                                 /** -> (#3) -> fetchComments.onResult.adapter(itemListener) */
                     when(mItem.itemId){
                         R.id.update -> { /** UPDATE */
                             if(item.android_id== getAndroidID(view.context)){                   // comment was written by usr
-                                listener.onItemClick(item, true, view)                   // set costumed click listener -> in fetchComments().onResponse()
+                                listener.onItemClick(item, true, view)                   /** (3) <- Implemented in fetchComments.onResponse().adapter */
                                 Toast.makeText(view.context,"Comment updated!",Toast.LENGTH_LONG).show()
                             }
                             else Toast.makeText(view.context,"Can't update other users comments",Toast.LENGTH_LONG).show()
@@ -78,7 +82,7 @@ class RecyclerViewAdapter(val social: Social, val listener: OnItemLongClickListe
                         }
                         R.id.delete -> {  /** DELETE */
                             if(item.android_id== getAndroidID(view.context)){                   //comment was written by usr
-                                listener.onItemClick(item, false, null)             //set costumed click listener -> in fetchComments().onResponse()
+                                listener.onItemClick(item, false, null)             /** (4) <- Implemented in fetchComments.onResponse().adapter */
                                 Toast.makeText(view.context,"Comment deleted!",Toast.LENGTH_LONG).show()
                             }
                             else Toast.makeText(view.context,"Can't delete other users comments",Toast.LENGTH_LONG).show()

@@ -26,9 +26,11 @@ import kotlinx.android.synthetic.main.row_comments.*
 /**
  * Created by giorgio on 03/07/18.
  * Fragment attached to ArticleDetailActivity that show latest user comments in a RV, calling fetchComments and using CommentsUtils and UserUtils
- * -> Networking.fetchComments()
- * -> CommentsUtils.CreateComment() / .UpdateComment() / .DeleteComment() / .RetrieveUsrID()
- * (*) this -> fetchComments.onResponse() -> RV_Adapter.RecyclerViewAdapter
+ * this -> Networking.fetchComments()
+ * this (onClick) -> CommentsUtils.CreateComment() / .UpdateComment() / .RetrieveUsrID()
+ *
+ * (* Adapter) this.onViewCreated       -> fetchComments.onResponse() -> RV_Adapter.RecyclerViewAdapter
+ * (3 Update) this.onClick             -> fetchComments.onResponse().adapter.onItemClick    ( also (4 Delete) -> CommentsUtils.DeleteComment() )
  * GeoNews
  */
 
@@ -39,7 +41,8 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
     lateinit var my_img: TextView           // ImgView for user image id near commentInput
     lateinit var android_id: String         // User android HW id
     lateinit var articleUrl: String         // url of selected article
-    var updating= false                     // boolean that check if a user is typing in commentInput because it's updating or creating a new comment
+    var updating= false                     /* boolean that check if a user is typing in commentInput because it's updating or creating a new comment
+                                               from fetchComments.onResponse().adapter.onItemClick  */
     lateinit var oldItem: UsrComment        // old comment for query purpose, in case user has updated the comment
 
     /** OnCreateView func */
@@ -67,7 +70,7 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
         val mLayoutManager = LinearLayoutManager(this.context)
         mRecyclerView.layoutManager = mLayoutManager
 
-        /* Sets up a SwipeRefreshLayout.OnRefreshListener invoked when the user performs a swipe-to-refresh gesture. */
+        /* Sets up a SwipeRefreshLayout.OnRefreshListener when user performs a swipe */
         val mSwipeRefreshLayout = view.findViewById(R.id.swiperefreshComment) as SwipeRefreshLayout
         mSwipeRefreshLayout.setOnRefreshListener({
             Commenting.fetchComments(this.context, articleUrl)                                  // (*) this -> fetchComments.onResponse() -> RV_Adapter.RecyclerViewAdapter
@@ -83,24 +86,25 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
         if(!updating) {                                                                     // User start typing a new comment (not already existing)
             if (!commentInput.text.isBlank()) {                                             // If user has written something in editText, crate comment (else do nothing)
                 if (CheckNetworking.isNetworkAvailable(this.context)) {
-                    val usrId = getUsrID()                                                  // get comments user id by fetching on DB ->
+                    val usrId = getUsrID()                                                  // get comments user id by fetching on DB -> (1)
                     my_img.text = usrId
-                    CreateComment.createComment(context, commentInput.text.toString(),
-                            articleUrl, android_id, usrId) //make a createComment request
-                } else Toast.makeText(this.context, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
+                    CreateComment.createComment(context, commentInput.text.toString(),      /** -> CommentsUtils.createComment() */
+                            articleUrl, android_id, usrId)
+                } else Toast.makeText(this.context, "No internet connection. " +
+                        "Please check and try again.", Toast.LENGTH_LONG).show()
             }
         }
-        else {                                                                              // User is updating his comment
-            println(commentInput.text.toString())
-            if (commentInput.text.toString() != oldItem.comment) {                          // If user has updated the comment in editText, crate comment (else do nothing)
+        else {                                                                                  /** (3) <- fetchComments.onResponse().adapter.onItemClick  */
+            if (commentInput.text.toString() != oldItem.comment) {                              // If user has updated the comment in editText, crate comment (else do nothing)
                 if (CheckNetworking.isNetworkAvailable(this.context))
-                    UpdateComment.updateComment(this.context, commentInput.text.toString(),
+                    UpdateComment.updateComment(this.context, commentInput.text.toString(),     /** (3) -> CommentsUtils.updateComment() */
                             oldItem.id, articleUrl)
-                else Toast.makeText(this.context, "No internet connection. Please check and try again.", Toast.LENGTH_LONG).show()
+                else Toast.makeText(this.context, "No internet connection. " +
+                        "Please check and try again.", Toast.LENGTH_LONG).show()
             }
-            updating=false                                                                  // updated. Change state
+            updating=false                                                                       // updated. Change state
         }
-        commentInput.text.clear()                                                           // clear edit text input
+        commentInput.text.clear()                                                                // clear edit text input
         /* Hide keyboard after send comment */
         val editV= this.activity.currentFocus
         if(editV!=null){
@@ -112,7 +116,7 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
 
 
     /**
-     * --> onClick.usrId =
+     * (1) -> onClick
      * Get comments user id by it's android_id + article url
      */
     private fun getUsrID() : String {
@@ -122,17 +126,18 @@ class ArticleCommentFragment : Fragment(), View.OnClickListener {
         my_img.background.setTint(backgroundColor)
 
         /* get and set comments user id */
-        var result= RetrieveUsrID.MakeNetworkRequestAsyncTask().execute(articleUrl, android_id).get()
+        var result= RetrieveUsrID.MakeNetworkRequestAsyncTask()
+                .execute(articleUrl, android_id).get()                  /** -> CommentsUtils.RetrieveUsrID() */
 
-        return if(result != "")                         // Usr has already written another comment
+        return if(result != "")                                        // Usr has already written another comment
                     result
-                else{                                   // Usr has not already written
+                else{                                                  // Usr has not already written
                     result=RetrieveUsrID.MakeNetworkRequestAsyncTask().execute(articleUrl, null).get()
 
-                    if(result != ""){                   // Another usr has already written -> get last Usr id + 1
+                    if(result != ""){                                  // Another usr has already written -> get last Usr id + 1
                         (result.toInt()+1).toString()
                     }
-                    else{                               // usr comment is first comment -> get 1
+                    else{                                              // usr comment is first comment -> get 1
                         "1"
                     }
                 }

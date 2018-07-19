@@ -16,7 +16,8 @@ import kotlinx.android.synthetic.main.row_articles.view.*
 /**
  * Created by giorgio on 01/07/18.
  * The adapter creates new items in the form of ViewHolders, populates the ViewHolders with data, and returns information about the data.
- * (* fetchArticles.onResponse()) --> onBindViewHolder() -> customViewHolder -> onItemClick() -> ArticleDetailActivity (articleUrl)
+ *
+ * (# fetchArticles.onResponse()) --> onBindViewHolder() -> customViewHolder -> onItemClick()
  * GeoNews
  */
 
@@ -62,7 +63,7 @@ class CustomViewHolder(val view: View, var article: Article?=null): RecyclerView
         const val ARTICLE_LINK_KEY= "ARTICLE_LINK"
     }
     init {
-        view.setOnClickListener {
+        view.setOnClickListener {                                                               /** (#) -> ArticleDetailActivity (Intent) */
             val intent= Intent(view.context, ArticleDetailActivity::class.java)
             intent.putExtra(ARTICLE_LINK_KEY, article?.url)
             view.context.startActivity(intent)
