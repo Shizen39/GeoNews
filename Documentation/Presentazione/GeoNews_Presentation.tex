@@ -1,0 +1,145 @@
+%!TEX program = xelatex
+\documentclass{beamer}
+
+\def\code#1{\texttt{#1}}
+
+\def\image[#1][#2]{
+	\begin{figure}[H]
+		\centering
+		\includegraphics[#2]{#1}
+\end{figure}}
+
+\def\captionimage[#1][#2]#3{
+	\begin{figure}[H]
+		\centering
+		\includegraphics[#2]{#1}
+		\caption{#3}
+\end{figure}}
+
+\logo{\includegraphics[height=1cm]{logo.png}\vspace{239pt}}
+
+
+\usetheme{mhthm}
+
+\title{GeoNews}
+\subtitle{Università degli Studi di Perugia}
+\author{Giorgio Mazza}
+\institute{UniPG}
+
+
+\date{Luglio 2018}
+
+\setcounter{showSlideNumbers}{1}
+
+\begin{document}
+	\setcounter{showProgressBar}{0}
+	\setcounter{showSlideNumbers}{0}
+
+	\frame{\titlepage}
+	\begin{frame}
+		\frametitle{Sommario}
+		\begin{itemize}
+			\item Introduzione \\ {\footnotesize\hspace{1em} Caratteristiche generali}
+			\item Client \\ {\footnotesize\hspace{1em} Aspetti relativi all'applicazione come client}
+			\item Server \\ {\footnotesize\hspace{1em} Aspetti riguardanti il server personale dei commenti}
+		\end{itemize}
+	\end{frame}
+
+	\setcounter{framenumber}{0}
+	\setcounter{showProgressBar}{1}
+	\setcounter{showSlideNumbers}{1}
+	\section{Introduzione}
+		\begin{frame}
+			\frametitle{Caratteristiche generali}
+			\begin{itemize}
+				\item Applicazione Android in grado di ricercare notizie e articoli da
+oltre 30.000 fonti
+				\item Notizie visualizzate su una mappa Google (API) posizionate contestualmente
+
+				
+			\end{itemize}
+		\end{frame}
+		\begin{frame}
+					\begin{itemize}
+			\frametitle{Linguaggi}
+				\item Linguaggio client: \textbf{Kotlin}
+				
+				\item Linguaggio scripting server: \textbf{PHP}
+				\item Linguaggio Database online: \textbf{MySQL}
+				\item Uso di \textbf{API REST} di newsapi.org
+				\item Scambio oggetti con \textbf{JSON}
+								
+			\end{itemize}
+		\end{frame}
+		\begin{frame}
+			\frametitle{Librerie}
+			\begin{itemize}
+				\item \textbf{OkHTTP} \\ {\footnotesize\hspace{1em} client HTTP semplice ed efficiente}
+				\item \textbf{Picasso} \\ {\footnotesize\hspace{1em} per il caricamento e caching delle immagini} 
+				\item \textbf{Gson} \\ {\footnotesize\hspace{1em} per il parsing JSON}
+				
+			\end{itemize}
+		\end{frame}
+		
+				\begin{frame}
+			\frametitle{Architettura}
+			\begin{itemize}
+				\item Architettura dell'applicazione
+				\image[images/Diagram.png][scale=0.3]
+			\end{itemize}
+		\end{frame}
+
+	
+	\section{Client}
+		\begin{frame}
+			\frametitle{Fetch Articles}
+			\begin{itemize}
+			\item Operazioni di reperimento degli articoli svolte dal file FetchArticles.kt, che effettua una chiamata \textbf{GET} in forma:\\ 
+\textbf{http://newsapi.org/v2/\textbf{end-point} ? \textbf{user-queries} \& apiKey=priv-key} 
+\item Stringa \textbf{JSON} passata alla funzione gson di Gson, che effettuerà il parsing
+			\end{itemize}
+			
+
+		\end{frame}
+		
+			\begin{frame}
+			\frametitle{Fetch Comments}
+			 Nel fragment dei commenti (\code{ArticleCommentFragment}), sono chiamate le funzioni CRUD sul database nel server di \code{geonews.altervista.org}, mediante l'uso di \code{okHttp}:
+\begin{itemize}
+\item\textbf{CREATE}: \\ \code{createComment()} invia una richiesta \textbf{POST} \\code{http://geonews.altervista.org/addComment.php} \\attraverso la pressione di un bottone "invia"
+\item\textbf{READ}: \code{fetchComments()} invia una richiesta \textbf{GET} \code{http://geonews.altervista.org/getAllComments.php} \\ effettuando uno \textit{swipe to refresh}
+\item\textbf{UPDATE}: \code{updateComment()} invia una richiesta \textbf{POST} \code{http://geonews.altervista.org/updateComment.php} \\dopo che l'utente ha scelto \textit{aggiorna commento}
+\item\textbf{DELETE}: \code{deleteComment()} invia una richiesta \textbf{POST} \code{http://geonews.altervista.org/deleteComment.php} \\dopo che l'utente ha scelto \textit{cancella commento}
+\end{itemize}
+\end{frame}
+
+	
+	\section{Server}
+		\begin{frame}	
+			\frametitle{Database}
+			Lo schema della tabella 
+			\textbf{COMMENTS} è il seguente:
+\image[images/DB_structure.png][scale=0.6]
+
+		\end{frame}		
+		\begin{frame}
+			\frametitle{Script PHP - CRUD}
+			\begin{itemize}
+\item\textbf{addComment.php} operazioni di \code{INSERT} di un commento mediante una richiesta \code{GET}
+\item\textbf{getAllComment.php} per le operazioni di \code{SELECT} su tutti i commenti di un determinato articolo, questo grazie alla clausola\\ \code{WHERE url=\$url\_articolo}
+\item\textbf{updateComment.php} per le operazioi di \code{UPDATE} di un commento. Con la clausola\\ \code{WHERE id=\$id\_commento} si prende il commento da modificare.
+\item\textbf{deleteComment.php} per le operazioi di \code{DELETE} di un commento. 
+\end{itemize}
+		\end{frame}	
+		
+				\begin{frame}
+			\frametitle{Script PHP - prepared statement}
+			\begin{itemize}
+\item\textbf{addComment.php} 
+\image[images/prepared.png][scale=0.5]
+\end{itemize}
+		\end{frame}	
+
+		
+	
+\end{document}

@@ -91,6 +91,6 @@ class ListArticlesActivity : AppCompatActivity() {
                 return locale.language
             }
         }
-        return ""
+        return "en"
     }
 }

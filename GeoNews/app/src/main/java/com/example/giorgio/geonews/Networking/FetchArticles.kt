@@ -1,6 +1,7 @@
 package com.example.giorgio.geonews.Networking
 
 import android.app.Activity
+import android.util.Log
 import android.widget.Toast
 import com.example.giorgio.geonews.Activities.ListArticles.adapters.RecyclerViewAdapter
 import com.example.giorgio.geonews.Data_utils.News
@@ -27,6 +28,7 @@ object Networking {
      */
     fun fetchArticles(context: Activity, end_point: String, queries: String?) {
         val URL = getUrl(context, end_point, queries)                                           //Function to form the final URL
+        Log.w(this.toString(), URL)
         val client = OkHttpClient()
         val request = Request.Builder().url(URL).build()
 

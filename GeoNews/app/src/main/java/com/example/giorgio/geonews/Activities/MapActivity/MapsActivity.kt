@@ -154,13 +154,13 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener, OnMap
     private fun fetchMarkers(isBlue: Boolean){
         blue=isBlue
         if(CheckNetworking.isNetworkAvailable(baseContext))
-            for(i in countriesISO.indices) {
-                val deferred= async(context=CommonPool){        // deferred==future in java... val that eventually will have a value
+            for(i in countriesISO.indices) {                    // Use coroutines async() to return a value from backgroundThread operation. Cannot use launch because it doesn't
+                val deferred= async(context=CommonPool){        // async() return deferred. deferred==future in java... val that eventually will have a value
                     getLatLng(i)                                // get address obj from countryIso
                 }
 
                 launch (context = UI){                          // on the main ui context, it will not block the main thread thanks await()
-                    setMarker(deferred.await(), isBlue)         //  hat suspend thread and resume it when deferred will have a result
+                    setMarker(deferred.await(), isBlue)         //  has suspend the thread and will resume it when deferred will have a result
                 }
 
                 deferred.invokeOnCompletion {                   // free coroutine on completion

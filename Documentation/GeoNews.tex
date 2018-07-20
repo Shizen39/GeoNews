@@ -32,38 +32,138 @@ GeoNews infine, si propone anche come community in cui gli utenti potranno espri
 \newpage
 \section{Architettura}
 L'architettura di GeoNews è rappresentata in figura:
-%\image[.png][scale=0.5]
+\image[Diagram.png][scale=0.4]{Architettura di GeoNews}
 Il dispositivo Android funge da Client a due diversi server: uno hostato su http://newsapi.org mediante il quale reperisce gli ultimi articoli ed uno sviluppato appositamente per GeoNews  e hostato su http://geonews.altervista.org volto alla gestione della sezione commenti presente in ogni articolo.
+\newpage
 
+\section{Aspetti di Android}
+L'applicazione è strutturata in tre package principali:
+\begin{itemize}
+\item \textbf{Activities}: in cui sono presenti tutte le activities che compongono l'applicazione
+\item \textbf{Data\_utils}: all'interno del quale ci sono funzioni di utilità riguardanti la manipolazione dei dati
+\item \textbf{Networking}: in cui ci sono tutte quelle classi che svolgono funzioni di networking
+\end{itemize}
 
+\subsection{Activities}
+Le principali activities sono:
+\begin{itemize}
+\item\textbf{SplashActivity}: una semplice activity che funge da splash attraverso la quale si potrà godere a pieno del logo di GeoNews.
+
+\item\textbf{MapsActivity}: activity lanciata dopo SplashActivity, contiene un \code{Fragment} che visualizza una \code{Mappa Google} reperita mediante le omonime API.\\
+La mappa posiziona contestualmente dei markers in alcune nazioni, che indicheranno la presenza di articoli disponibili.\\
+Selezionato un marker il metodo \code{onMarkerClick} invierà un Intent all'activity \code{ListArticlesActivity}, la quale sarà lanciata. 
+
+\item\textbf{ListArticlesActivity}: Activity che visualizza in una \code{RevyclerView} una lista delle news correlate alla nazione selezionata;\\
+Questo è reso possibile grazie a:
+\begin{itemize}
+\item\textbf{fetchArticles} del package Networking, il quale reperisce le suddette news da Internet (se ne parlerà successivamente)
+\item\textbf{RV\_adapter} che gestisce la costruzione del layout e l'inserimento degli articoli in esso.\\
+Da qui se l'utente fa click su uno specifico articolo, il metodo \code{setOnClickListener} della classe \code{CustomViewHolder} invierà un Intent con specificato l'\code{url} dell'articolo e  sarà lanciata l'activity \code{ArticleDetailActivity}
+\end{itemize}
+
+\item\textbf{ArticleDetailActivity}: Activity che visualizza, mediante una \code{WebView}, l'articolo selezionato collegandosi all'url passatogli dalla precedente Activity.\\
+L'activity comprende in sè un \code{Fragment} che può essere nascosto o visualizzato grazie ad un \code{Button} apposito.
+\begin{itemize}
+\item[•]\textbf{ArticleCommentFragment}: Fragment che  visualizza la lista dei commenti creati dagli utenti in quella specifica news.\\
+Anch'esso usa due estensioni:
+\begin{itemize}
+\item[-]\textbf{fetchComments} del package Networking, il quale reperisce i commenti dal database hostato us geonews.altervista.org
+\item[-]\textbf{RV\_adapter} che gestisce la costruzione del layout e l'inserimento dei commenti in esso.\\
+Da qui, mediante la funzione \code{setOnLongClickListener} nella classe \code{CustomViewHolder}, se l'utente tiene premuto su un commento viene istanziato un \code{PopupMenu} che visualizzerà all'utente due scelte: \textit{Rimuovi commento }o \textit{Aggiorna commento}.
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\subsection{DataUtils}
+Qui troviamo funzioni di modellazione dei dati come:
+\begin{itemize}
+\item\textbf{Models.kt}: Contiene classi personalizzate che rappresentano entità dell'applicazione come \textit{News, Article, Comment...} usate per il parsing da json ad oggetti.
+\item\textbf{Constant}: Contiene tutte le costanti come gli url per comunicare con il server geonews.altervista.org
+\end{itemize}
 
 \newpage
-\section{Il client: l'app Android}
-Gli aspetti client dell'applicazione riguardano la comunicazione con i due server	
-	\subsection{Networking}
-	News API è un sito che mette a disposizione delle API REST che ritornato metadati in formato JSON da oltre 30.000 sorgenti, testate giornalistiche e blogs.\\
-	Per questo motivo si è deviso di basare le comunicazioni tra il client ed i due server sullo scambio di JSON;
+\subsection{Networking}
+Classi \textit{singletons} usate per interrogare il web service \textit{newsapi.org} e, tramite parser, ottenere dalla risposta in json oggetti usabili nell'applicazione. Abbiamo:
+\begin{itemize}
+\item\textbf{FetchArticles} che, con l'aiuto di \code{okHttp} e \code{gson} ritrova gli articoli da newsapi.org e li passa all'\code{Adapter} di \code{ListArticlesActivity}.
+\item\textbf{FetchComments} che, con l'aiuto di \code{okHttp} e \code{gson} ritrova i commenti da geonews.altervista.org e li passa all'\code{Adapter} di \code{ArticleCommentFragment}.
+\item\textbf{CommentsUtils} che implementano le operazioni CRUD sui commenti.
+\end{itemize}
+Si rimanda alla lettura della sezione successiva per l'approfondimemnto del package Networking.
+
+\image[Activities.png][scale=0.1]{MapActivity, ListArticlesActivity e ArticleDetailActivity}
+
+\newpage
+\section{Aspetti di Networking}
+	\subsection{Il client: l'app Android}
+	Gli aspetti client dell'applicazione riguardano la comunicazione con i due server	\\
+	Per reperire gli articoli, GeoNews fa riferimento a \code{newsAPI}, un sito che mette a disposizione delle API REST che ritornato metadati in formato JSON da oltre 30.000 sorgenti, testate giornalistiche e blogs.\\
+	Per questo motivo si è deciso di basare le comunicazioni tra il client ed i due server sullo scambio di JSON;
 	Per fare il parsing di quest'ultimo, il client si serve della libreria open source \textbf{Gson} di Google.\\
 	Per quanto rigurada il networking, si sono utilizzate due librerie in particolare:
 	\begin{itemize}
 	\item\textbf{OkHttp}: client http efficiente e di facile utilizzo
 	\item\textbf{Picasso}: usato per il caricamento efficace delle immagini
 	\end{itemize}
-\subsubsection{Reperimento degli articoli}
-Per quanto riguarda le operazioni di reperimento degli articoli, queste sono svolte all'interno del file \code{FetchArticles.kt} che effettuerà una chiamata \textbf{GET} in forma\\ \code{http://newsapi.org/v2/\textbf{end-point} ? \textbf{user-queries} \& apiKey=chiave-privata} dove:
+\subsubsection{FetchArticles.kt - Reperire gli articoli}
+Per quanto riguarda le operazioni di reperimento degli articoli, queste sono svolte all'interno del file \code{FetchArticles.kt} che effettuerà una chiamata \textbf{GET} in forma:\\ 
+\code{http://newsapi.org/v2/\textbf{end-point} ? \textbf{user-queries} \& apiKey=priv-key} dove:
 \begin{itemize}
-\item[-]\textbf{end-point} rappresenta uno degli end-point messi a disposizione da newsapi.org, dei quali -in questo caso- è stato utilizzato \textit{top-headlines} che fornisce le top news sottoforma di titolo, descrizione e link all'articolo.
-\item[-]\textbf{user-queries} sono le queries che l'utente può fare alle API a fini di ricerca mirata di news. In questo caso, è stata utilizzata la query \code{country="zona della mappa selezionata"} per visualizzare le news di quella specifica zona.
+\item\textbf{end-point} rappresenta uno degli \code{end-points} messi a disposizione da newsapi.org:
+\begin{itemize}
+\item per la ricerca delle \textbf{top news} si è usato l'end-pont \textit{top-headlines} che fornisce le top news sottoforma di titolo, descrizione e link all'articolo.
+\item per la ricerca delle news \textbf{per argomento} si è usato l'end-point \textit{everything} che permette di visualizzare news anche meno recenti e consente più parametri di ricerca.
 \end{itemize}
-Dopo di che, la stringa JSON sarà passata alla funzione gson di Gson, che effettuerà il parsing in oggetti utilizzabili in Kotlin.\\
+\item\textbf{user-queries} sono le queries che l'utente può fare alle API a fini di ricerca mirata di news. In questo caso, è stata utilizzata la query \code{country="zona della mappa selezionata"} per visualizzare le news di quella specifica zona.
+\end{itemize}
+Dopo di che, la stringa \textbf{JSON} sarà passata alla funzione gson di Gson, che effettuerà il parsing in oggetti utilizzabili in Kotlin, usando come modelli la classe \code{Models.kt}.\\
 Una volta selezionato un articolo, sarà visualizzato sottoforma di \textit{WebView}.
-\subsubsection{Gestione dei commenti}
-Per quanto riguarda la sezione commenti, l'app mette a disposizione un \textit{Fragment} che l'utente può nascondere o visualizzare durante la lettura dell'articolo;\\
-QUesto, contiente all'interno l'elenco dei commenti già scritti in relazione a quel determinato articolo, ed un \textit{EditText} attraverso il quale l'utente può postare sul server hostato su altervista i propri commenti.\\
-Il riperimento dei commenti già presenti, è effettuato nel file \code{FetchComments.kt}
-	
+\subsubsection{FetchComments.kt - Reperire i commenti}
+Per quanto riguarda la sezione commenti, lì'app mette a disposizione un \code{Fragment} che l'utente può nascondere o visualizzare durante la lettura dell'articolo;\\
+Questo contiente all'interno l'elenco dei commenti già scritti da altri utenti in quel determinato articolo, ed un \code{EditText} attraverso il quale l'utente può postare sul server di geonews.altervista.org i propri commenti.
+\paragraph{CommentsUtils}: Nel fragment dei commenti (\code{ArticleCommentFragment}), a seconda dell'accadere dei relativi eventi scatenati dall'utente, vengono chiamate le funzioni presenti all'interno del file \code{CommentsUtils}, che implementa le principali operazioni CRUD sul database dei commenti nel server di \code{geonews.altervista.org}, mediante l'uso di \code{okHttp}:
+\begin{itemize}
+\item\textbf{CREATE}: \code{createComment()} invia una richiesta \textbf{POST} all'url \\\code{http://geonews.altervista.org/addComment.php} \\attraverso la pressione del bottone per inviare un commento
+\item\textbf{READ}: \code{fetchComments()} invia una richiesta \textbf{GET} all'url \\\code{http://geonews.altervista.org/getAllComments.php} \\attraverso la creazione del fragment ma anche dopo aver effettuato uno \textit{swipe to refresh}
+\item\textbf{UPDATE}: \code{updateComment()} invia una richiesta \textbf{POST} all'url \\\code{http://geonews.altervista.org/updateComment.php} \\dopo che l'utente ha scelto \textit{aggiorna commento} dal \code{PopupMenu} comparso alla pressione prolungata su di un suo commento
+\item\textbf{DELETE}: \code{deleteComment()} invia una richiesta \textbf{POST} all'url \\\code{http://geonews.altervista.org/deleteComment.php} \\dopo che l'utente ha scelto \textit{cancella commento} dal \code{PopupMenu} comparso alla pressione prolungata su di un suo commento
+\end{itemize}
 \newpage
-\section{Il server per la condivisione dei consigli}
+
+\subsection{Il server: sezione per i commenti}
+Lato server sono stati realizzati un database MySQL per la memorizzazione dei commenti, e alcuni script PHP per la loro fruizione.\\
+\subsubsection{Tabella COMMENTS MySQL}
+Lo schema della tabella \textbf{COMMENTS} è il seguente:
+\image[DB_structure.png][scale=0.6]{Struttura della tabella COMMENTS}
+In cui:
+\begin{itemize}
+\item\textbf{id}: è l'identificativo unico di ogni commento, \textit{chiave primaria} della tabella ed \textit{autoincrementato}
+\item\textbf{comment}: è il commento scritto dall'utente vero e proprio
+\item\textbf{url}: è l'indirizzo internet dell'articolo su cui è stato scritto quel determinato commento
+\item\textbf{android\_id}: è l'identificativo unico del dispositivo dal quale il commento è stato scritto
+\item\textbf{usr}: è l'id a cui sono associati tutti i commenti di un utente nella sezione dei commenti relativa ad un determinato articolo (es. al primo utente che commenta gli viene assegnato usr=1, al secondo utente \textit{distinto} usr=2 etc.)
+\item\textbf{date}: è la data di pubblicazione del commento
+
+\end{itemize}
+\newpage
+\subsubsection{Script PHP}
+Per la gestione dei commenti sono stati realizzati 5 script PHP, di cui i primi quattro sono quelli fondamentali ed implementano le operazioni CRUD sui commenti:
+\begin{itemize}
+\item\textbf{addComment.php} per le operazioni di \code{INSERT} di un commento mediante una richiesta \code{GET}
+\item\textbf{getAllComment.php} per le operazioni di \code{SELECT} su tutti i commenti di un determinato articolo, questo grazie alla clausola\\ \code{WHERE url=\$url\_articolo}
+\item\textbf{updateComment.php} per le operazioi di \code{UPDATE} di un commento. Per semplicità, la verifica di appartenenza del commento selezionato all'utente che lo vuole agggiornare, viene eseguita direttamente da codice in Kotlin. Se questa condizione è soddisfatta, con la clausola\\ \code{WHERE id=\$id\_commento} si prende il modifica il commento selezionato. Altrimenti l'utente sarà avvisato del fatto che non può modificare commenti altrui.
+\item\textbf{deleteComment.php} per le operazioi di \code{DELETE} di un commento. La verifica di appartenenza del commento selezionato all'utente avviene in modo analogo all'update
+\end{itemize}
+
+E gli ultimi due sono solo di utilità all'applicazione android, in particolare per la funzione \code{getUsrID} di \code{CommentsUtils.kt}:
+\begin{itemize}
+\item\textbf{getUsr.php} nel caso in cui l'utente abbia già scritto un commento in quell'articolo (si verifica mediante la clausola\\ \code{WHERE url=\$url AND android\_id=\$android\_id}) e ritorna il suo \code{user id}.
+
+\item\textbf{getMaxUsr.php}  nel caso in cui l'utente non ha ancora scritto alcun commento in quell'articolo. In questo caso gli verrà assegnato un nuovo \code{user id} selezionando l'ultimo user id assegnato (mediante la clausola \code{SELECT MAX(usr)} ed incrementandolo di uno.
+\end{itemize}
+E' opportuno notare che negli script che implementano le operazioni CRUD si è deciso realizzarli mediante l'uso dei \textbf{prepared statement} per evitare \textit{SQL injection} e per separare la logica dei dati da quella di SQL, considerando anche il fatto che per scrivere un commento non c'è alcun sistema di login ma sarà fatto il tutto in forma anonima.
+
+\section{Further Works}
+Sviluppi futuri sull'applicazione GeoNews riguardano la traduzione in tempo reale non solo di titoli e descrizioni, ma anche degli articoli stessi, mediante una previa scelta delle lingue preferite dall'utente in fase di onboarding (ma comunque modificabili attraverso le impostazioni dell'applicazione). Questo porterebbe la fruibilità di GeoNews ad un livello superiore in quanto permetterebbe la fruizione di news estere da parte di chiunque.
 
 
 \end{document}

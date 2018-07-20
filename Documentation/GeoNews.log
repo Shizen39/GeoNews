@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99999 (TeX Live 2018/Arch Linux) (preloaded format=xelatex 2018.7.1)  17 JUL 2018 10:01
+This is XeTeX, Version 3.14159265-2.6-0.99999 (TeX Live 2018/Arch Linux) (preloaded format=xelatex 2018.7.1)  20 JUL 2018 08:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -280,29 +280,91 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 \tf@toc=\write4
 \openout4 = `GeoNews.toc'.
 
- [2] [3] [4]
-LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 53.
+ [2] [3]
+File: ./images/Diagram.png Graphic file (type bmp)
+<./images/Diagram.png>
 
-Overfull \hbox (79.49997pt too wide) in paragraph at lines 53--54
-\TU/lmr/m/n/12 forma \TU/lmtt/m/n/12 http://newsapi.org/v2/\TU/lmtt/b/n/12 end-
-point \TU/lmtt/m/n/12 ? \TU/lmtt/b/n/12 user-queries \TU/lmtt/m/n/12 & apiKey=c
-hiave-privata
+Overfull \hbox (33.17351pt too wide) in paragraph at lines 35--35
+ [][] 
  []
 
 
-Overfull \hbox (8.05682pt too wide) in paragraph at lines 55--56
-\TU/lmr/m/n/12 che fornisce le top news sottoforma di titolo, descrizione e lin
-k all’articolo. 
+Overfull \hbox (10.02403pt too wide) in paragraph at lines 36--37
+\TU/lmr/m/n/12 luppato appositamente per GeoNews e hostato su http://geonews.al
+tervista.org
+ []
+
+[4]
+Overfull \hbox (0.82399pt too wide) in paragraph at lines 60--62
+[]\TU/lmr/bx/n/12 RV_adapter \TU/lmr/m/n/12 che gestisce la costruzione del lay
+out e l’inserimento
+ []
+
+
+Overfull \hbox (8.20485pt too wide) in paragraph at lines 64--66
+[]\TU/lmr/bx/n/12 ArticleDetailActivity\TU/lmr/m/n/12 : Activity che visualizza
+, mediante una \TU/lmtt/m/n/12 WebView\TU/lmr/m/n/12 ,
  []
 
 [5]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 63.
- [6]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 63.
+Overfull \hbox (23.26393pt too wide) in paragraph at lines 71--73
+[]\TU/lmr/bx/n/12 RV_adapter \TU/lmr/m/n/12 che gestisce la costruzione del lay
+out e l’inserimento
+ []
+
+[6]
+Overfull \hbox (30.67604pt too wide) in paragraph at lines 88--89
+\TU/lmr/m/n/12 da geonews.altervista.org e li passa all’\TU/lmtt/m/n/12 Adapter
+ \TU/lmr/m/n/12 di \TU/lmtt/m/n/12 ArticleCommentFragment\TU/lmr/m/n/12 . 
+ []
+
+File: ./images/Activities.png Graphic file (type bmp)
+<./images/Activities.png>
+
+Overfull \hbox (61.8169pt too wide) in paragraph at lines 93--93
+ [][] 
+ []
+
+[7]
+LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <12> not available
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 109.
+
+Overfull \hbox (10.09996pt too wide) in paragraph at lines 108--110
+\TU/lmtt/m/n/12 http://newsapi.org/v2/\TU/lmtt/b/n/12 end-point \TU/lmtt/m/n/12
+ ? \TU/lmtt/b/n/12 user-queries \TU/lmtt/m/n/12 & apiKey=priv-key
+ []
+
+[8]
+Overfull \hbox (27.77203pt too wide) in paragraph at lines 121--123
+\TU/lmtt/m/n/12 Fragment \TU/lmr/m/n/12 che l’utente può nascondere o visualizz
+are durante la lettura dell’articolo; 
+ []
+
+
+Overfull \hbox (7.95204pt too wide) in paragraph at lines 123--124
+ []\TU/lmr/bx/n/12 CommentsUtils[] \TU/lmr/m/n/12 : Nel fragment dei commenti (
+\TU/lmtt/m/n/12 ArticleCommentFragment\TU/lmr/m/n/12 ),
+ []
+
+[9]
+Underfull \hbox (badness 10000) in paragraph at lines 133--134
+
+ []
+
+File: ./images/DB_structure.png Graphic file (type bmp)
+<./images/DB_structure.png>
+
+Overfull \hbox (34.98811pt too wide) in paragraph at lines 136--136
+ [][] 
+ []
+
+[10] [11]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 169.
+ [12]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 169.
  (./GeoNews.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 63.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 63.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 169.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 169.
 
 
 Package rerunfilecheck Warning: File `GeoNews.out' has changed.
@@ -310,16 +372,16 @@ Package rerunfilecheck Warning: File `GeoNews.out' has changed.
 (rerunfilecheck)                or use package `bookmark'.
 
 Package rerunfilecheck Info: Checksums for `GeoNews.out':
-(rerunfilecheck)             Before: 9A8F2D54B6379F613BC24C940D4F648C
-(rerunfilecheck)             After:  942113FBEEC5F962E37CB8A654BB4C7B.
+(rerunfilecheck)             Before: 26D6BB3A05A2DD115B6FF92FE33B16A9
+(rerunfilecheck)             After:  E807DAF6781CFB0DC2C955F4BB3BC54D.
  ) 
 Here is how much of TeX's memory you used:
- 9020 strings out of 492970
- 124832 string characters out of 6139409
- 220493 words of memory out of 5000000
- 12975 multiletter control sequences out of 15000+600000
+ 9042 strings out of 492970
+ 125224 string characters out of 6139409
+ 223493 words of memory out of 5000000
+ 12990 multiletter control sequences out of 15000+600000
  7729 words of font info for 37 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 28i,6n,45p,793b,335s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 28i,6n,45p,793b,431s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on GeoNews.pdf (6 pages).
+Output written on GeoNews.pdf (12 pages).
